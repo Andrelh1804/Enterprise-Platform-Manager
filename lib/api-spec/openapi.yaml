@@ -3,13 +3,29 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: EventFlow API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Executive dashboard aggregates
+  - name: events
+    description: Event management
+  - name: sponsors
+    description: Sponsor CRM
+  - name: suppliers
+    description: Supplier marketplace
+  - name: contracts
+    description: Contract management
+  - name: staff
+    description: Staff management
+  - name: finance
+    description: Financial transactions
+  - name: registrations
+    description: Participant registrations
 paths:
   /healthz:
     get:
@@ -24,6 +40,587 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Executive dashboard summary
+      responses:
+        "200":
+          description: Aggregated KPIs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /events:
+    get:
+      operationId: listEvents
+      tags: [events]
+      summary: List events
+      responses:
+        "200":
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+    post:
+      operationId: createEvent
+      tags: [events]
+      summary: Create an event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventInput"
+      responses:
+        "201":
+          description: Created event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
+  /events/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getEvent
+      tags: [events]
+      summary: Get an event
+      responses:
+        "200":
+          description: Event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+    put:
+      operationId: updateEvent
+      tags: [events]
+      summary: Update an event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventInput"
+      responses:
+        "200":
+          description: Updated event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+    delete:
+      operationId: deleteEvent
+      tags: [events]
+      summary: Delete an event
+      responses:
+        "204":
+          description: Deleted
+
+  /sponsors:
+    get:
+      operationId: listSponsors
+      tags: [sponsors]
+      summary: List sponsors
+      parameters:
+        - name: eventId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of sponsors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sponsor"
+    post:
+      operationId: createSponsor
+      tags: [sponsors]
+      summary: Create a sponsor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SponsorInput"
+      responses:
+        "201":
+          description: Created sponsor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sponsor"
+
+  /sponsors/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getSponsor
+      tags: [sponsors]
+      summary: Get a sponsor
+      responses:
+        "200":
+          description: Sponsor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sponsor"
+    put:
+      operationId: updateSponsor
+      tags: [sponsors]
+      summary: Update a sponsor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SponsorInput"
+      responses:
+        "200":
+          description: Updated sponsor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sponsor"
+    delete:
+      operationId: deleteSponsor
+      tags: [sponsors]
+      summary: Delete a sponsor
+      responses:
+        "204":
+          description: Deleted
+
+  /suppliers:
+    get:
+      operationId: listSuppliers
+      tags: [suppliers]
+      summary: List suppliers
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of suppliers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Supplier"
+    post:
+      operationId: createSupplier
+      tags: [suppliers]
+      summary: Create a supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierInput"
+      responses:
+        "201":
+          description: Created supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  /suppliers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getSupplier
+      tags: [suppliers]
+      summary: Get a supplier
+      responses:
+        "200":
+          description: Supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    put:
+      operationId: updateSupplier
+      tags: [suppliers]
+      summary: Update a supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierInput"
+      responses:
+        "200":
+          description: Updated supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    delete:
+      operationId: deleteSupplier
+      tags: [suppliers]
+      summary: Delete a supplier
+      responses:
+        "204":
+          description: Deleted
+
+  /contracts:
+    get:
+      operationId: listContracts
+      tags: [contracts]
+      summary: List contracts
+      parameters:
+        - name: eventId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of contracts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contract"
+    post:
+      operationId: createContract
+      tags: [contracts]
+      summary: Create a contract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractInput"
+      responses:
+        "201":
+          description: Created contract
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+
+  /contracts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getContract
+      tags: [contracts]
+      summary: Get a contract
+      responses:
+        "200":
+          description: Contract
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+    put:
+      operationId: updateContract
+      tags: [contracts]
+      summary: Update a contract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractInput"
+      responses:
+        "200":
+          description: Updated contract
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+    delete:
+      operationId: deleteContract
+      tags: [contracts]
+      summary: Delete a contract
+      responses:
+        "204":
+          description: Deleted
+
+  /staff:
+    get:
+      operationId: listStaff
+      tags: [staff]
+      summary: List staff members
+      parameters:
+        - name: eventId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of staff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StaffMember"
+    post:
+      operationId: createStaff
+      tags: [staff]
+      summary: Create a staff member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffMemberInput"
+      responses:
+        "201":
+          description: Created staff member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+
+  /staff/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getStaff
+      tags: [staff]
+      summary: Get a staff member
+      responses:
+        "200":
+          description: Staff member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+    put:
+      operationId: updateStaff
+      tags: [staff]
+      summary: Update a staff member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffMemberInput"
+      responses:
+        "200":
+          description: Updated staff member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffMember"
+    delete:
+      operationId: deleteStaff
+      tags: [staff]
+      summary: Delete a staff member
+      responses:
+        "204":
+          description: Deleted
+
+  /finance/transactions:
+    get:
+      operationId: listTransactions
+      tags: [finance]
+      summary: List financial transactions
+      parameters:
+        - name: eventId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [income, expense]
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+    post:
+      operationId: createTransaction
+      tags: [finance]
+      summary: Create a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionInput"
+      responses:
+        "201":
+          description: Created transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+
+  /finance/transactions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getTransaction
+      tags: [finance]
+      summary: Get a transaction
+      responses:
+        "200":
+          description: Transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+    put:
+      operationId: updateTransaction
+      tags: [finance]
+      summary: Update a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionInput"
+      responses:
+        "200":
+          description: Updated transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+    delete:
+      operationId: deleteTransaction
+      tags: [finance]
+      summary: Delete a transaction
+      responses:
+        "204":
+          description: Deleted
+
+  /registrations:
+    get:
+      operationId: listRegistrations
+      tags: [registrations]
+      summary: List registrations
+      parameters:
+        - name: eventId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of registrations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Registration"
+    post:
+      operationId: createRegistration
+      tags: [registrations]
+      summary: Create a registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrationInput"
+      responses:
+        "201":
+          description: Created registration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Registration"
+
+  /registrations/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getRegistration
+      tags: [registrations]
+      summary: Get a registration
+      responses:
+        "200":
+          description: Registration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Registration"
+    put:
+      operationId: updateRegistration
+      tags: [registrations]
+      summary: Update a registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrationInput"
+      responses:
+        "200":
+          description: Updated registration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Registration"
+    delete:
+      operationId: deleteRegistration
+      tags: [registrations]
+      summary: Delete a registration
+      responses:
+        "204":
+          description: Deleted
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +631,375 @@ components:
       required:
         - status
 
+    DashboardSummary:
+      type: object
+      properties:
+        activeEventsCount:
+          type: integer
+        totalRegistrations:
+          type: integer
+        expectedRevenue:
+          type: number
+        realizedRevenue:
+          type: number
+        totalExpenses:
+          type: number
+        profit:
+          type: number
+        sponsorsCount:
+          type: integer
+        suppliersCount:
+          type: integer
+        staffCount:
+          type: integer
+        pendingContracts:
+          type: integer
+        contractsExpiringSoon:
+          type: integer
+        upcomingEvents:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        recentTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"
+      required:
+        - activeEventsCount
+        - totalRegistrations
+        - expectedRevenue
+        - realizedRevenue
+        - totalExpenses
+        - profit
+        - sponsorsCount
+        - suppliersCount
+        - staffCount
+        - pendingContracts
+        - contractsExpiringSoon
+        - upcomingEvents
+        - recentTransactions
+
+    EventInput:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        eventType:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        venue:
+          type: string
+        organizer:
+          type: string
+        capacity:
+          type: integer
+        status:
+          type: string
+          enum: [planning, confirmed, in_progress, completed, cancelled]
+      required:
+        - name
+        - category
+        - eventType
+        - date
+        - city
+        - state
+        - venue
+        - organizer
+        - capacity
+        - status
+
+    Event:
+      allOf:
+        - $ref: "#/components/schemas/EventInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
+
+    SponsorInput:
+      type: object
+      properties:
+        eventId:
+          type: string
+        name:
+          type: string
+        tier:
+          type: string
+          enum: [master, gold, silver, bronze, naming_rights]
+        contactName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        investment:
+          type: number
+        status:
+          type: string
+          enum: [prospect, negotiating, confirmed, delivered]
+      required:
+        - eventId
+        - name
+        - tier
+        - contactName
+        - email
+        - phone
+        - investment
+        - status
+
+    Sponsor:
+      allOf:
+        - $ref: "#/components/schemas/SponsorInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
+
+    SupplierInput:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        contactName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        price:
+          type: number
+        rating:
+          type: number
+        status:
+          type: string
+          enum: [active, inactive, pending_review]
+      required:
+        - name
+        - category
+        - contactName
+        - email
+        - phone
+        - price
+        - rating
+        - status
+
+    Supplier:
+      allOf:
+        - $ref: "#/components/schemas/SupplierInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
+
+    ContractInput:
+      type: object
+      properties:
+        eventId:
+          type: string
+        title:
+          type: string
+        contractType:
+          type: string
+          enum: [supplier, sponsor, staff, artist, speaker, exhibitor, volunteer]
+        counterpartyName:
+          type: string
+        value:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [draft, sent, signed, expired, cancelled]
+      required:
+        - eventId
+        - title
+        - contractType
+        - counterpartyName
+        - value
+        - startDate
+        - endDate
+        - status
+
+    Contract:
+      allOf:
+        - $ref: "#/components/schemas/ContractInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
+
+    StaffMemberInput:
+      type: object
+      properties:
+        eventId:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        hourlyRate:
+          type: number
+        status:
+          type: string
+          enum: [scheduled, checked_in, checked_out, no_show]
+      required:
+        - eventId
+        - name
+        - role
+        - email
+        - phone
+        - hourlyRate
+        - status
+
+    StaffMember:
+      allOf:
+        - $ref: "#/components/schemas/StaffMemberInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
+
+    TransactionInput:
+      type: object
+      properties:
+        eventId:
+          type: string
+        type:
+          type: string
+          enum: [income, expense]
+        category:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        dueDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [pending, paid, overdue, cancelled]
+        paymentMethod:
+          type: string
+          enum: [pix, credit_card, boleto, bank_transfer, cash]
+      required:
+        - eventId
+        - type
+        - category
+        - description
+        - amount
+        - dueDate
+        - status
+        - paymentMethod
+
+    Transaction:
+      allOf:
+        - $ref: "#/components/schemas/TransactionInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
+
+    RegistrationInput:
+      type: object
+      properties:
+        eventId:
+          type: string
+        participantName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        category:
+          type: string
+        ticketType:
+          type: string
+          enum: [free, paid, vip, box, premium, combo]
+        price:
+          type: number
+        status:
+          type: string
+          enum: [confirmed, pending, cancelled, waitlist]
+        checkedIn:
+          type: boolean
+      required:
+        - eventId
+        - participantName
+        - email
+        - phone
+        - category
+        - ticketType
+        - price
+        - status
+        - checkedIn
+
+    Registration:
+      allOf:
+        - $ref: "#/components/schemas/RegistrationInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - createdAt
