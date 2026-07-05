@@ -91,15 +91,15 @@ export default function SuppliersPage() {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: form });
-        toast.success("Supplier updated");
+        toast.success("Fornecedor atualizado");
       } else {
         await createMutation.mutateAsync({ data: form });
-        toast.success("Supplier created");
+        toast.success("Fornecedor criado");
       }
       invalidate();
       setDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     }
   }
 
@@ -107,10 +107,10 @@ export default function SuppliersPage() {
     if (!deleting) return;
     try {
       await deleteMutation.mutateAsync({ id: deleting.id });
-      toast.success("Supplier deleted");
+      toast.success("Fornecedor excluído");
       invalidate();
     } catch {
-      toast.error("Failed to delete supplier");
+      toast.error("Falha ao excluir fornecedor");
     } finally {
       setDeleting(null);
     }
@@ -120,21 +120,21 @@ export default function SuppliersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Suppliers</h1>
-          <p className="text-muted-foreground">Your vetted marketplace of vendors and service providers.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Fornecedores</h1>
+          <p className="text-muted-foreground">Seu marketplace de fornecedores e prestadores de serviço aprovados.</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="h-4 w-4 mr-2" />
-          New Supplier
+          Novo Fornecedor
         </Button>
       </div>
 
       <Select value={categoryFilter} onValueChange={setCategoryFilter}>
         <SelectTrigger className="w-52">
-          <SelectValue placeholder="Category" />
+          <SelectValue placeholder="Categoria" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Categories</SelectItem>
+          <SelectItem value="all">Todas as Categorias</SelectItem>
           {categories.map((c) => (
             <SelectItem key={c} value={c}>
               {c}
@@ -153,19 +153,19 @@ export default function SuppliersPage() {
         ) : !suppliers || suppliers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <Store className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No suppliers found.</p>
+            <p className="text-muted-foreground">Nenhum fornecedor encontrado.</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Supplier</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Rating</TableHead>
+                <TableHead>Fornecedor</TableHead>
+                <TableHead>Categoria</TableHead>
+                <TableHead>Contato</TableHead>
+                <TableHead>Preço</TableHead>
+                <TableHead>Avaliação</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -204,16 +204,16 @@ export default function SuppliersPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Supplier" : "New Supplier"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Fornecedor" : "Novo Fornecedor"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
-              <Label>Name</Label>
+              <Label>Nome</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Category</Label>
-              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Catering, AV, Security..." />
+              <Label>Categoria</Label>
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Buffet, Audiovisual, Segurança..." />
             </div>
             <div className="space-y-1.5">
               <Label>Status</Label>
@@ -231,11 +231,11 @@ export default function SuppliersPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Contact Name</Label>
+              <Label>Nome do Contato</Label>
               <Input value={form.contactName} onChange={(e) => setForm({ ...form, contactName: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Price</Label>
+              <Label>Preço</Label>
               <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
             </div>
             <div className="space-y-1.5">
@@ -243,11 +243,11 @@ export default function SuppliersPage() {
               <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Phone</Label>
+              <Label>Telefone</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Rating (1-5)</Label>
+              <Label>Avaliação (1-5)</Label>
               <Input
                 type="number"
                 min={1}
@@ -259,10 +259,10 @@ export default function SuppliersPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={!form.name || !form.category}>
-              {editing ? "Save Changes" : "Create Supplier"}
+              {editing ? "Salvar Alterações" : "Criar Fornecedor"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -271,15 +271,15 @@ export default function SuppliersPage() {
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete supplier?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir fornecedor?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove "{deleting?.name}" from your marketplace.
+              Isso removerá permanentemente "{deleting?.name}" do seu marketplace.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

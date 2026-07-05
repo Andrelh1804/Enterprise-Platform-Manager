@@ -88,15 +88,15 @@ export default function StaffPage() {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: form });
-        toast.success("Staff member updated");
+        toast.success("Membro da equipe atualizado");
       } else {
         await createMutation.mutateAsync({ data: form });
-        toast.success("Staff member added");
+        toast.success("Membro da equipe adicionado");
       }
       invalidate();
       setDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     }
   }
 
@@ -104,10 +104,10 @@ export default function StaffPage() {
     if (!deleting) return;
     try {
       await deleteMutation.mutateAsync({ id: deleting.id });
-      toast.success("Staff member removed");
+      toast.success("Membro da equipe removido");
       invalidate();
     } catch {
-      toast.error("Failed to remove staff member");
+      toast.error("Falha ao remover membro da equipe");
     } finally {
       setDeleting(null);
     }
@@ -117,12 +117,12 @@ export default function StaffPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Staff</h1>
-          <p className="text-muted-foreground">Crew scheduling and check-in status across events.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Equipe</h1>
+          <p className="text-muted-foreground">Escala de equipe e status de check-in em todos os eventos.</p>
         </div>
         <Button onClick={openCreate} disabled={!events || events.length === 0}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Staff
+          Adicionar Membro
         </Button>
       </div>
 
@@ -136,19 +136,19 @@ export default function StaffPage() {
         ) : !staff || staff.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <UserSquare2 className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No staff assigned yet.</p>
+            <p className="text-muted-foreground">Nenhum membro de equipe designado ainda.</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Event</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Hourly Rate</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Evento</TableHead>
+                <TableHead>Função</TableHead>
+                <TableHead>Contato</TableHead>
+                <TableHead>Valor por Hora</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,7 +158,7 @@ export default function StaffPage() {
                   <TableCell className="text-muted-foreground">{eventNameById.get(member.eventId) ?? "—"}</TableCell>
                   <TableCell>{member.role}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{member.email}</TableCell>
-                  <TableCell>{formatCurrency(member.hourlyRate)}/hr</TableCell>
+                  <TableCell>{formatCurrency(member.hourlyRate)}/h</TableCell>
                   <TableCell>
                     <Badge variant={statusBadgeVariant[member.status]}>{formatLabel(member.status)}</Badge>
                   </TableCell>
@@ -180,18 +180,18 @@ export default function StaffPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Staff Member" : "Add Staff Member"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Membro da Equipe" : "Adicionar Membro da Equipe"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
-              <Label>Name</Label>
+              <Label>Nome</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </div>
             <div className="space-y-1.5 col-span-2">
-              <Label>Event</Label>
+              <Label>Evento</Label>
               <Select value={form.eventId} onValueChange={(v) => setForm({ ...form, eventId: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select an event" />
+                  <SelectValue placeholder="Selecione um evento" />
                 </SelectTrigger>
                 <SelectContent>
                   {(events ?? []).map((e) => (
@@ -203,8 +203,8 @@ export default function StaffPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Role</Label>
-              <Input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="Security, Coordinator..." />
+              <Label>Função</Label>
+              <Input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="Segurança, Coordenador..." />
             </div>
             <div className="space-y-1.5">
               <Label>Status</Label>
@@ -226,11 +226,11 @@ export default function StaffPage() {
               <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Phone</Label>
+              <Label>Telefone</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
             <div className="space-y-1.5 col-span-2">
-              <Label>Hourly Rate</Label>
+              <Label>Valor por Hora</Label>
               <Input
                 type="number"
                 value={form.hourlyRate}
@@ -240,10 +240,10 @@ export default function StaffPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={!form.name || !form.eventId || !form.role}>
-              {editing ? "Save Changes" : "Add Staff Member"}
+              {editing ? "Salvar Alterações" : "Adicionar Membro"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -252,15 +252,15 @@ export default function StaffPage() {
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove staff member?</AlertDialogTitle>
+            <AlertDialogTitle>Remover membro da equipe?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove "{deleting?.name}" from the roster.
+              Isso removerá permanentemente "{deleting?.name}" do quadro de equipe.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Remove
+              Remover
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -91,15 +91,15 @@ export default function EventsPage() {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data });
-        toast.success("Event updated");
+        toast.success("Evento atualizado");
       } else {
         await createMutation.mutateAsync({ data });
-        toast.success("Event created");
+        toast.success("Evento criado");
       }
       invalidate();
       setDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     }
   }
 
@@ -107,10 +107,10 @@ export default function EventsPage() {
     if (!deleting) return;
     try {
       await deleteMutation.mutateAsync({ id: deleting.id });
-      toast.success("Event deleted");
+      toast.success("Evento excluído");
       invalidate();
     } catch {
-      toast.error("Failed to delete event");
+      toast.error("Falha ao excluir evento");
     } finally {
       setDeleting(null);
     }
@@ -120,12 +120,12 @@ export default function EventsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Events</h1>
-          <p className="text-muted-foreground">Every production your organization is running.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Eventos</h1>
+          <p className="text-muted-foreground">Todas as produções que sua organização está executando.</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="h-4 w-4 mr-2" />
-          New Event
+          Novo Evento
         </Button>
       </div>
 
@@ -139,23 +139,23 @@ export default function EventsPage() {
         ) : !events || events.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <CalendarDays className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No events yet. Create your first one to get started.</p>
+            <p className="text-muted-foreground">Nenhum evento ainda. Crie o primeiro para começar.</p>
             <Button onClick={openCreate} variant="outline">
               <Plus className="h-4 w-4 mr-2" />
-              New Event
+              Novo Evento
             </Button>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Capacity</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Categoria</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead>Local</TableHead>
+                <TableHead>Capacidade</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -193,47 +193,47 @@ export default function EventsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Event" : "New Event"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Evento" : "Novo Evento"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
-              <Label>Name</Label>
+              <Label>Nome</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Category</Label>
-              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Corporate, Sports, Wedding..." />
+              <Label>Categoria</Label>
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Corporativo, Esportivo, Casamento..." />
             </div>
             <div className="space-y-1.5">
-              <Label>Event Type</Label>
-              <Input value={form.eventType} onChange={(e) => setForm({ ...form, eventType: e.target.value })} placeholder="Conference, Marathon..." />
+              <Label>Tipo de Evento</Label>
+              <Input value={form.eventType} onChange={(e) => setForm({ ...form, eventType: e.target.value })} placeholder="Conferência, Maratona..." />
             </div>
             <div className="space-y-1.5">
-              <Label>Date</Label>
+              <Label>Data</Label>
               <Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Time</Label>
+              <Label>Horário</Label>
               <Input type="time" value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>City</Label>
+              <Label>Cidade</Label>
               <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>State</Label>
+              <Label>Estado</Label>
               <Input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Venue</Label>
+              <Label>Local</Label>
               <Input value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Organizer</Label>
+              <Label>Organizador</Label>
               <Input value={form.organizer} onChange={(e) => setForm({ ...form, organizer: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Capacity</Label>
+              <Label>Capacidade</Label>
               <Input
                 type="number"
                 value={form.capacity}
@@ -258,10 +258,10 @@ export default function EventsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={!form.name || !form.date}>
-              {editing ? "Save Changes" : "Create Event"}
+              {editing ? "Salvar Alterações" : "Criar Evento"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -270,15 +270,15 @@ export default function EventsPage() {
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete event?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir evento?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete "{deleting?.name}" and cannot be undone.
+              Isso removerá permanentemente "{deleting?.name}" e não pode ser desfeito.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

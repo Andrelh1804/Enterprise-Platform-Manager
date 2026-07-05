@@ -97,15 +97,15 @@ export default function SponsorsPage() {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: form });
-        toast.success("Sponsor updated");
+        toast.success("Patrocinador atualizado");
       } else {
         await createMutation.mutateAsync({ data: form });
-        toast.success("Sponsor created");
+        toast.success("Patrocinador criado");
       }
       invalidate();
       setDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     }
   }
 
@@ -113,10 +113,10 @@ export default function SponsorsPage() {
     if (!deleting) return;
     try {
       await deleteMutation.mutateAsync({ id: deleting.id });
-      toast.success("Sponsor deleted");
+      toast.success("Patrocinador excluído");
       invalidate();
     } catch {
-      toast.error("Failed to delete sponsor");
+      toast.error("Falha ao excluir patrocinador");
     } finally {
       setDeleting(null);
     }
@@ -126,22 +126,22 @@ export default function SponsorsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sponsors</h1>
-          <p className="text-muted-foreground">Sponsorship pipeline across every event.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Patrocinadores</h1>
+          <p className="text-muted-foreground">Funil de patrocínio em todos os eventos.</p>
         </div>
         <Button onClick={openCreate} disabled={!events || events.length === 0}>
           <Plus className="h-4 w-4 mr-2" />
-          New Sponsor
+          Novo Patrocinador
         </Button>
       </div>
 
       <div className="flex gap-3">
         <Select value={tierFilter} onValueChange={setTierFilter}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Tier" />
+            <SelectValue placeholder="Nível" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Tiers</SelectItem>
+            <SelectItem value="all">Todos os Níveis</SelectItem>
             {Object.values(SponsorInputTier).map((t) => (
               <SelectItem key={t} value={t}>
                 {formatLabel(t)}
@@ -154,7 +154,7 @@ export default function SponsorsPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="all">Todos os Status</SelectItem>
             {Object.values(SponsorInputStatus).map((s) => (
               <SelectItem key={s} value={s}>
                 {formatLabel(s)}
@@ -174,19 +174,19 @@ export default function SponsorsPage() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <Handshake className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No sponsors match your filters.</p>
+            <p className="text-muted-foreground">Nenhum patrocinador corresponde aos filtros.</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Sponsor</TableHead>
-                <TableHead>Event</TableHead>
-                <TableHead>Tier</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Investment</TableHead>
+                <TableHead>Patrocinador</TableHead>
+                <TableHead>Evento</TableHead>
+                <TableHead>Nível</TableHead>
+                <TableHead>Contato</TableHead>
+                <TableHead>Investimento</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -220,18 +220,18 @@ export default function SponsorsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Sponsor" : "New Sponsor"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Patrocinador" : "Novo Patrocinador"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
-              <Label>Sponsor Name</Label>
+              <Label>Nome do Patrocinador</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </div>
             <div className="space-y-1.5 col-span-2">
-              <Label>Event</Label>
+              <Label>Evento</Label>
               <Select value={form.eventId} onValueChange={(v) => setForm({ ...form, eventId: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select an event" />
+                  <SelectValue placeholder="Selecione um evento" />
                 </SelectTrigger>
                 <SelectContent>
                   {(events ?? []).map((e) => (
@@ -243,7 +243,7 @@ export default function SponsorsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Tier</Label>
+              <Label>Nível</Label>
               <Select value={form.tier} onValueChange={(v) => setForm({ ...form, tier: v as typeof form.tier })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -273,11 +273,11 @@ export default function SponsorsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Contact Name</Label>
+              <Label>Nome do Contato</Label>
               <Input value={form.contactName} onChange={(e) => setForm({ ...form, contactName: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Investment</Label>
+              <Label>Investimento</Label>
               <Input
                 type="number"
                 value={form.investment}
@@ -289,16 +289,16 @@ export default function SponsorsPage() {
               <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Phone</Label>
+              <Label>Telefone</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={!form.name || !form.eventId}>
-              {editing ? "Save Changes" : "Create Sponsor"}
+              {editing ? "Salvar Alterações" : "Criar Patrocinador"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -307,15 +307,15 @@ export default function SponsorsPage() {
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete sponsor?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir patrocinador?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove "{deleting?.name}" from the sponsor list.
+              Isso removerá permanentemente "{deleting?.name}" da lista de patrocinadores.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -97,15 +97,15 @@ export default function RegistrationsPage() {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: form });
-        toast.success("Registration updated");
+        toast.success("Inscrição atualizada");
       } else {
         await createMutation.mutateAsync({ data: form });
-        toast.success("Registration created");
+        toast.success("Inscrição criada");
       }
       invalidate();
       setDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     }
   }
 
@@ -117,7 +117,7 @@ export default function RegistrationsPage() {
       });
       invalidate();
     } catch {
-      toast.error("Failed to update check-in");
+      toast.error("Falha ao atualizar check-in");
     }
   }
 
@@ -125,10 +125,10 @@ export default function RegistrationsPage() {
     if (!deleting) return;
     try {
       await deleteMutation.mutateAsync({ id: deleting.id });
-      toast.success("Registration deleted");
+      toast.success("Inscrição excluída");
       invalidate();
     } catch {
-      toast.error("Failed to delete registration");
+      toast.error("Falha ao excluir inscrição");
     } finally {
       setDeleting(null);
     }
@@ -138,21 +138,21 @@ export default function RegistrationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Registrations</h1>
-          <p className="text-muted-foreground">Participants, tickets, and check-in status.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Inscrições</h1>
+          <p className="text-muted-foreground">Participantes, ingressos e status de check-in.</p>
         </div>
         <Button onClick={openCreate} disabled={!events || events.length === 0}>
           <Plus className="h-4 w-4 mr-2" />
-          New Registration
+          Nova Inscrição
         </Button>
       </div>
 
       <Select value={eventFilter} onValueChange={setEventFilter}>
         <SelectTrigger className="w-52">
-          <SelectValue placeholder="Event" />
+          <SelectValue placeholder="Evento" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Events</SelectItem>
+          <SelectItem value="all">Todos os Eventos</SelectItem>
           {(events ?? []).map((e) => (
             <SelectItem key={e.id} value={e.id}>
               {e.name}
@@ -171,19 +171,19 @@ export default function RegistrationsPage() {
         ) : !registrations || registrations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <Ticket className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No registrations found.</p>
+            <p className="text-muted-foreground">Nenhuma inscrição encontrada.</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Participant</TableHead>
-                <TableHead>Event</TableHead>
-                <TableHead>Ticket</TableHead>
-                <TableHead>Price</TableHead>
+                <TableHead>Participante</TableHead>
+                <TableHead>Evento</TableHead>
+                <TableHead>Ingresso</TableHead>
+                <TableHead>Preço</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Checked In</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Check-in</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -219,18 +219,18 @@ export default function RegistrationsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Registration" : "New Registration"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Inscrição" : "Nova Inscrição"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
-              <Label>Participant Name</Label>
+              <Label>Nome do Participante</Label>
               <Input value={form.participantName} onChange={(e) => setForm({ ...form, participantName: e.target.value })} />
             </div>
             <div className="space-y-1.5 col-span-2">
-              <Label>Event</Label>
+              <Label>Evento</Label>
               <Select value={form.eventId} onValueChange={(v) => setForm({ ...form, eventId: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select an event" />
+                  <SelectValue placeholder="Selecione um evento" />
                 </SelectTrigger>
                 <SelectContent>
                   {(events ?? []).map((e) => (
@@ -242,11 +242,11 @@ export default function RegistrationsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Category</Label>
-              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="General, VIP..." />
+              <Label>Categoria</Label>
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Geral, VIP..." />
             </div>
             <div className="space-y-1.5">
-              <Label>Ticket Type</Label>
+              <Label>Tipo de Ingresso</Label>
               <Select value={form.ticketType} onValueChange={(v) => setForm({ ...form, ticketType: v as typeof form.ticketType })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -261,7 +261,7 @@ export default function RegistrationsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Price</Label>
+              <Label>Preço</Label>
               <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
             </div>
             <div className="space-y-1.5">
@@ -284,20 +284,20 @@ export default function RegistrationsPage() {
               <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Phone</Label>
+              <Label>Telefone</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
             <div className="flex items-center gap-2 col-span-2">
               <Checkbox checked={form.checkedIn} onCheckedChange={(v) => setForm({ ...form, checkedIn: !!v })} />
-              <Label>Already checked in</Label>
+              <Label>Já fez check-in</Label>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={!form.participantName || !form.eventId}>
-              {editing ? "Save Changes" : "Create Registration"}
+              {editing ? "Salvar Alterações" : "Criar Inscrição"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -306,15 +306,15 @@ export default function RegistrationsPage() {
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete registration?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir inscrição?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove "{deleting?.participantName}" from the registration list.
+              Isso removerá permanentemente "{deleting?.participantName}" da lista de inscrições.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

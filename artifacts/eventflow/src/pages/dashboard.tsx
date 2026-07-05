@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import { formatCurrency, formatDate, formatLabel } from "@/lib/format";
 
 export default function Dashboard() {
   const { data: summary, isLoading, error } = useGetDashboardSummary();
@@ -12,8 +13,8 @@ export default function Dashboard() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Loading executive summary...</p>
+          <h1 className="text-3xl font-bold tracking-tight">Painel</h1>
+          <p className="text-muted-foreground">Carregando resumo executivo...</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -35,7 +36,7 @@ export default function Dashboard() {
   if (error || !summary) {
     return (
       <div className="flex h-[50vh] items-center justify-center text-destructive">
-        Error loading dashboard data. Please try again.
+        Erro ao carregar os dados do painel. Tente novamente.
       </div>
     );
   }
@@ -43,14 +44,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Executive overview of EventFlow operations.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Painel</h1>
+        <p className="text-muted-foreground">Visão geral executiva das operações do EventFlow.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Active Events</CardTitle>
+            <CardTitle className="text-sm font-medium">Eventos Ativos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.activeEventsCount}</div>
@@ -58,7 +59,7 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Inscrições</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.totalRegistrations}</div>
@@ -66,22 +67,22 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Profit</CardTitle>
+            <CardTitle className="text-sm font-medium">Lucro</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${summary.profit.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{formatCurrency(summary.profit)}</div>
             <p className="text-xs text-muted-foreground">
-              Revenue: ${summary.realizedRevenue.toLocaleString()} / Exp: ${summary.totalExpenses.toLocaleString()}
+              Receita: {formatCurrency(summary.realizedRevenue)} / Desp: {formatCurrency(summary.totalExpenses)}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Expiring Contracts</CardTitle>
+            <CardTitle className="text-sm font-medium">Contratos a Expirar</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">{summary.contractsExpiringSoon}</div>
-            <p className="text-xs text-muted-foreground">Requires immediate attention</p>
+            <p className="text-xs text-muted-foreground">Requer atenção imediata</p>
           </CardContent>
         </Card>
       </div>
@@ -89,18 +90,18 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="lg:col-span-4">
           <CardHeader>
-            <CardTitle>Upcoming Events</CardTitle>
+            <CardTitle>Próximos Eventos</CardTitle>
           </CardHeader>
           <CardContent>
             {summary.upcomingEvents.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">No upcoming events</div>
+              <div className="text-sm text-muted-foreground text-center py-4">Nenhum evento próximo</div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Event</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Location</TableHead>
+                    <TableHead>Evento</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Local</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -115,7 +116,7 @@ export default function Dashboard() {
                       <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
                       <TableCell>{event.city}, {event.state}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{event.status.replace("_", " ")}</Badge>
+                        <Badge variant="outline">{formatLabel(event.status)}</Badge>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -127,11 +128,11 @@ export default function Dashboard() {
 
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <CardTitle>Transações Recentes</CardTitle>
           </CardHeader>
           <CardContent>
             {summary.recentTransactions.length === 0 ? (
-              <div className="text-sm text-muted-foreground text-center py-4">No recent transactions</div>
+              <div className="text-sm text-muted-foreground text-center py-4">Nenhuma transação recente</div>
             ) : (
               <div className="space-y-4">
                 {summary.recentTransactions.map((tx) => (
@@ -139,11 +140,11 @@ export default function Dashboard() {
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">{tx.description}</p>
                       <p className="text-xs text-muted-foreground">
-                        {tx.category} &bull; {new Date(tx.dueDate).toLocaleDateString()}
+                        {tx.category} &bull; {formatDate(tx.dueDate)}
                       </p>
                     </div>
                     <div className={`text-sm font-medium ${tx.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                      {tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString()}
+                      {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                     </div>
                   </div>
                 ))}

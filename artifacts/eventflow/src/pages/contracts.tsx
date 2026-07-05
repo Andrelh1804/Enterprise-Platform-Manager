@@ -91,15 +91,15 @@ export default function ContractsPage() {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: form });
-        toast.success("Contract updated");
+        toast.success("Contrato atualizado");
       } else {
         await createMutation.mutateAsync({ data: form });
-        toast.success("Contract created");
+        toast.success("Contrato criado");
       }
       invalidate();
       setDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     }
   }
 
@@ -107,10 +107,10 @@ export default function ContractsPage() {
     if (!deleting) return;
     try {
       await deleteMutation.mutateAsync({ id: deleting.id });
-      toast.success("Contract deleted");
+      toast.success("Contrato excluído");
       invalidate();
     } catch {
-      toast.error("Failed to delete contract");
+      toast.error("Falha ao excluir contrato");
     } finally {
       setDeleting(null);
     }
@@ -120,12 +120,12 @@ export default function ContractsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Contracts</h1>
-          <p className="text-muted-foreground">Agreements with sponsors, suppliers, staff, and talent.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Contratos</h1>
+          <p className="text-muted-foreground">Acordos com patrocinadores, fornecedores, equipe e talentos.</p>
         </div>
         <Button onClick={openCreate} disabled={!events || events.length === 0}>
           <Plus className="h-4 w-4 mr-2" />
-          New Contract
+          Novo Contrato
         </Button>
       </div>
 
@@ -139,20 +139,20 @@ export default function ContractsPage() {
         ) : !contracts || contracts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <FileText className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No contracts yet.</p>
+            <p className="text-muted-foreground">Nenhum contrato ainda.</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Event</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Counterparty</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Expires</TableHead>
+                <TableHead>Título</TableHead>
+                <TableHead>Evento</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Contraparte</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Expira</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -187,18 +187,18 @@ export default function ContractsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Contract" : "New Contract"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Contrato" : "Novo Contrato"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
-              <Label>Title</Label>
+              <Label>Título</Label>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </div>
             <div className="space-y-1.5 col-span-2">
-              <Label>Event</Label>
+              <Label>Evento</Label>
               <Select value={form.eventId} onValueChange={(v) => setForm({ ...form, eventId: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select an event" />
+                  <SelectValue placeholder="Selecione um evento" />
                 </SelectTrigger>
                 <SelectContent>
                   {(events ?? []).map((e) => (
@@ -210,7 +210,7 @@ export default function ContractsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Contract Type</Label>
+              <Label>Tipo de Contrato</Label>
               <Select value={form.contractType} onValueChange={(v) => setForm({ ...form, contractType: v as typeof form.contractType })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -240,28 +240,28 @@ export default function ContractsPage() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Counterparty</Label>
+              <Label>Contraparte</Label>
               <Input value={form.counterpartyName} onChange={(e) => setForm({ ...form, counterpartyName: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Value</Label>
+              <Label>Valor</Label>
               <Input type="number" value={form.value} onChange={(e) => setForm({ ...form, value: Number(e.target.value) })} />
             </div>
             <div className="space-y-1.5">
-              <Label>Start Date</Label>
+              <Label>Data de Início</Label>
               <Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label>End Date</Label>
+              <Label>Data de Término</Label>
               <Input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={!form.title || !form.eventId || !form.startDate || !form.endDate}>
-              {editing ? "Save Changes" : "Create Contract"}
+              {editing ? "Salvar Alterações" : "Criar Contrato"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -270,15 +270,15 @@ export default function ContractsPage() {
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete contract?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir contrato?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete "{deleting?.title}" and cannot be undone.
+              Isso excluirá permanentemente "{deleting?.title}" e não pode ser desfeito.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

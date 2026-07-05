@@ -16,14 +16,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navigation = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
-    { name: "Events", href: "/events", icon: CalendarDays },
-    { name: "Sponsors", href: "/sponsors", icon: Building2 },
-    { name: "Suppliers", href: "/suppliers", icon: Users },
-    { name: "Contracts", href: "/contracts", icon: FileText },
-    { name: "Staff", href: "/staff", icon: UserSquare2 },
-    { name: "Finance", href: "/finance", icon: BadgeDollarSign },
-    { name: "Registrations", href: "/registrations", icon: Ticket },
+    { name: "Painel", href: "/", icon: LayoutDashboard },
+    { name: "Eventos", href: "/events", icon: CalendarDays },
+    { name: "Patrocinadores", href: "/sponsors", icon: Building2 },
+    { name: "Fornecedores", href: "/suppliers", icon: Users },
+    { name: "Contratos", href: "/contracts", icon: FileText },
+    { name: "Equipe", href: "/staff", icon: UserSquare2 },
+    { name: "Financeiro", href: "/finance", icon: BadgeDollarSign },
+    { name: "Inscrições", href: "/registrations", icon: Ticket },
   ];
 
   return (
