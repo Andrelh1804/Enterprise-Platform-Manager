@@ -227,18 +227,6 @@ export type StaffMember = StaffMemberInput & {
   createdAt: string;
 };
 
-export type RegistrationInputTicketType = typeof RegistrationInputTicketType[keyof typeof RegistrationInputTicketType];
-
-
-export const RegistrationInputTicketType = {
-  free: 'free',
-  paid: 'paid',
-  vip: 'vip',
-  box: 'box',
-  premium: 'premium',
-  combo: 'combo',
-} as const;
-
 export type RegistrationInputStatus = typeof RegistrationInputStatus[keyof typeof RegistrationInputStatus];
 
 
@@ -251,18 +239,52 @@ export const RegistrationInputStatus = {
 
 export interface RegistrationInput {
   eventId: string;
+  ticketTypeId: string;
   participantName: string;
   email: string;
   phone: string;
-  category: string;
-  ticketType: RegistrationInputTicketType;
   price: number;
   status: RegistrationInputStatus;
-  checkedIn: boolean;
 }
 
-export type Registration = RegistrationInput & {
+export type Registration = RegistrationInput & ({
   id: string;
+  ticketCode: string;
+  checkedIn: boolean;
+  checkedInAt?: string | null;
+  createdAt: string;
+});
+
+export interface CheckInInput {
+  ticketCode: string;
+}
+
+export interface CheckInResult {
+  registration: Registration;
+  alreadyCheckedIn: boolean;
+}
+
+export type TicketTypeInputStatus = typeof TicketTypeInputStatus[keyof typeof TicketTypeInputStatus];
+
+
+export const TicketTypeInputStatus = {
+  active: 'active',
+  inactive: 'inactive',
+  sold_out: 'sold_out',
+} as const;
+
+export interface TicketTypeInput {
+  eventId: string;
+  name: string;
+  description?: string | null;
+  price: number;
+  quantity: number;
+  status: TicketTypeInputStatus;
+}
+
+export type TicketType = TicketTypeInput & {
+  id: string;
+  sold: number;
   createdAt: string;
 };
 
@@ -296,6 +318,10 @@ export const ListTransactionsType = {
 } as const;
 
 export type ListRegistrationsParams = {
+eventId?: string;
+};
+
+export type ListTicketTypesParams = {
 eventId?: string;
 };
 

@@ -14,25 +14,35 @@ import ContractsList from "@/pages/contracts";
 import StaffList from "@/pages/staff";
 import FinanceList from "@/pages/finance";
 import RegistrationsList from "@/pages/registrations";
+import TicketTypesList from "@/pages/ticket-types";
+import CheckIn from "@/pages/checkin";
+import PublicEvent from "@/pages/public-event";
 
 const queryClient = new QueryClient();
 
 function Router() {
   return (
-    <AppLayout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/events" component={EventsList} />
-        <Route path="/events/:id" component={EventDetail} />
-        <Route path="/sponsors" component={SponsorsList} />
-        <Route path="/suppliers" component={SuppliersList} />
-        <Route path="/contracts" component={ContractsList} />
-        <Route path="/staff" component={StaffList} />
-        <Route path="/finance" component={FinanceList} />
-        <Route path="/registrations" component={RegistrationsList} />
-        <Route component={NotFound} />
-      </Switch>
-    </AppLayout>
+    <Switch>
+      <Route path="/e/:id" component={PublicEvent} />
+      <Route>
+        <AppLayout>
+          <Switch>
+            <Route path="/" component={Dashboard} />
+            <Route path="/events" component={EventsList} />
+            <Route path="/events/:id" component={EventDetail} />
+            <Route path="/ticket-types" component={TicketTypesList} />
+            <Route path="/checkin" component={CheckIn} />
+            <Route path="/sponsors" component={SponsorsList} />
+            <Route path="/suppliers" component={SuppliersList} />
+            <Route path="/contracts" component={ContractsList} />
+            <Route path="/staff" component={StaffList} />
+            <Route path="/finance" component={FinanceList} />
+            <Route path="/registrations" component={RegistrationsList} />
+            <Route component={NotFound} />
+          </Switch>
+        </AppLayout>
+      </Route>
+    </Switch>
   );
 }
 

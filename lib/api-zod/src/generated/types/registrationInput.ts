@@ -6,16 +6,13 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { RegistrationInputStatus } from './registrationInputStatus';
-import type { RegistrationInputTicketType } from './registrationInputTicketType';
 
 export interface RegistrationInput {
   eventId: string;
+  ticketTypeId: string;
   participantName: string;
   email: string;
   phone: string;
-  category: string;
-  ticketType: RegistrationInputTicketType;
   price: number;
   status: RegistrationInputStatus;
-  checkedIn: boolean;
 }

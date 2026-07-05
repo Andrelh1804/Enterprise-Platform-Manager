@@ -9,7 +9,9 @@ import {
   FileText, 
   BadgeDollarSign, 
   UserSquare2,
-  Ticket
+  Ticket,
+  Tags,
+  ScanLine
 } from "lucide-react";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -18,12 +20,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigation = [
     { name: "Painel", href: "/", icon: LayoutDashboard },
     { name: "Eventos", href: "/events", icon: CalendarDays },
+    { name: "Ingressos e Lotes", href: "/ticket-types", icon: Tags },
+    { name: "Inscrições", href: "/registrations", icon: Ticket },
+    { name: "Check-in", href: "/checkin", icon: ScanLine },
     { name: "Patrocinadores", href: "/sponsors", icon: Building2 },
     { name: "Fornecedores", href: "/suppliers", icon: Users },
     { name: "Contratos", href: "/contracts", icon: FileText },
     { name: "Equipe", href: "/staff", icon: UserSquare2 },
     { name: "Financeiro", href: "/finance", icon: BadgeDollarSign },
-    { name: "Inscrições", href: "/registrations", icon: Ticket },
   ];
 
   return (

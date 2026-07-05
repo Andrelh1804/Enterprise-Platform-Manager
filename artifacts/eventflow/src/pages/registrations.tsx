@@ -2,13 +2,13 @@ import { useState } from "react";
 import {
   useListRegistrations,
   useCreateRegistration,
-  useUpdateRegistration,
   useDeleteRegistration,
   useListEvents,
+  useListTicketTypes,
   getListRegistrationsQueryKey,
   getGetDashboardSummaryQueryKey,
-  RegistrationInputTicketType,
-  RegistrationInputStatus,
+  getListTicketTypesQueryKey,
+  getListTicketTypesQueryOptions,
   type Registration,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,35 +17,29 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatLabel, statusBadgeVariant } from "@/lib/format";
-import { Plus, Pencil, Trash2, Ticket } from "lucide-react";
+import { Plus, Trash2, Ticket, QrCode } from "lucide-react";
 import { toast } from "sonner";
+import { QRCodeSVG } from "qrcode.react";
 
 const emptyForm = {
   eventId: "",
+  ticketTypeId: "",
   participantName: "",
   email: "",
   phone: "",
-  category: "",
-  ticketType: "paid" as const,
-  price: 0,
   status: "confirmed" as const,
-  checkedIn: false,
 };
 
 export default function RegistrationsPage() {
@@ -56,68 +50,53 @@ export default function RegistrationsPage() {
   );
   const { data: events } = useListEvents();
   const createMutation = useCreateRegistration();
-  const updateMutation = useUpdateRegistration();
   const deleteMutation = useDeleteRegistration();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editing, setEditing] = useState<Registration | null>(null);
   const [deleting, setDeleting] = useState<Registration | null>(null);
+  const [viewingTicket, setViewingTicket] = useState<Registration | null>(null);
   const [form, setForm] = useState(emptyForm);
+
+  const { data: formTicketTypes } = useListTicketTypes(
+    form.eventId ? { eventId: form.eventId } : undefined,
+    {
+      query: {
+        ...getListTicketTypesQueryOptions(form.eventId ? { eventId: form.eventId } : undefined),
+        enabled: !!form.eventId,
+      },
+    },
+  );
 
   const eventNameById = new Map((events ?? []).map((e) => [e.id, e.name]));
 
   function openCreate() {
-    setEditing(null);
-    setForm({ ...emptyForm, eventId: events?.[0]?.id ?? "" });
-    setDialogOpen(true);
-  }
-
-  function openEdit(registration: Registration) {
-    setEditing(registration);
-    setForm({
-      eventId: registration.eventId,
-      participantName: registration.participantName,
-      email: registration.email,
-      phone: registration.phone,
-      category: registration.category,
-      ticketType: registration.ticketType as typeof emptyForm.ticketType,
-      price: registration.price,
-      status: registration.status as typeof emptyForm.status,
-      checkedIn: registration.checkedIn,
-    });
+    const eventId = eventFilter !== "all" ? eventFilter : events?.[0]?.id ?? "";
+    setForm({ ...emptyForm, eventId });
     setDialogOpen(true);
   }
 
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: getListRegistrationsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getListTicketTypesQueryKey() });
   }
 
   async function handleSubmit() {
+    const ticketType = (formTicketTypes ?? []).find((t) => t.id === form.ticketTypeId);
+    if (!ticketType) {
+      toast.error("Selecione um lote de ingresso válido");
+      return;
+    }
     try {
-      if (editing) {
-        await updateMutation.mutateAsync({ id: editing.id, data: form });
-        toast.success("Inscrição atualizada");
-      } else {
-        await createMutation.mutateAsync({ data: form });
-        toast.success("Inscrição criada");
-      }
+      const created = await createMutation.mutateAsync({
+        data: { ...form, price: ticketType.price },
+      });
+      toast.success("Inscrição criada");
       invalidate();
       setDialogOpen(false);
-    } catch {
-      toast.error("Algo deu errado");
-    }
-  }
-
-  async function toggleCheckIn(registration: Registration) {
-    try {
-      await updateMutation.mutateAsync({
-        id: registration.id,
-        data: { ...registration, checkedIn: !registration.checkedIn },
-      });
-      invalidate();
-    } catch {
-      toast.error("Falha ao atualizar check-in");
+      setViewingTicket(created);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error ?? "Algo deu errado");
     }
   }
 
@@ -138,12 +117,12 @@ export default function RegistrationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Inscrições</h1>
-          <p className="text-muted-foreground">Participantes, ingressos e status de check-in.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Inscrições e Ingressos</h1>
+          <p className="text-muted-foreground">Participantes, ingressos emitidos e status de check-in.</p>
         </div>
         <Button onClick={openCreate} disabled={!events || events.length === 0}>
           <Plus className="h-4 w-4 mr-2" />
-          Nova Inscrição
+          Emitir Ingresso
         </Button>
       </div>
 
@@ -179,7 +158,7 @@ export default function RegistrationsPage() {
               <TableRow>
                 <TableHead>Participante</TableHead>
                 <TableHead>Evento</TableHead>
-                <TableHead>Ingresso</TableHead>
+                <TableHead>Código</TableHead>
                 <TableHead>Preço</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Check-in</TableHead>
@@ -192,18 +171,27 @@ export default function RegistrationsPage() {
                   <TableCell className="font-medium">{registration.participantName}</TableCell>
                   <TableCell className="text-muted-foreground">{eventNameById.get(registration.eventId) ?? "—"}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{formatLabel(registration.ticketType)}</Badge>
+                    <button
+                      className="font-mono text-xs bg-muted px-2 py-1 rounded hover:underline"
+                      onClick={() => setViewingTicket(registration)}
+                    >
+                      {registration.ticketCode}
+                    </button>
                   </TableCell>
-                  <TableCell>{formatCurrency(registration.price)}</TableCell>
+                  <TableCell>{registration.price === 0 ? "Gratuito" : formatCurrency(registration.price)}</TableCell>
                   <TableCell>
                     <Badge variant={statusBadgeVariant[registration.status]}>{formatLabel(registration.status)}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Checkbox checked={registration.checkedIn} onCheckedChange={() => toggleCheckIn(registration)} />
+                    {registration.checkedIn ? (
+                      <Badge variant="default">Feito</Badge>
+                    ) : (
+                      <Badge variant="outline">Pendente</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right space-x-1">
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(registration)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" onClick={() => setViewingTicket(registration)}>
+                      <QrCode className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => setDeleting(registration)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
@@ -217,9 +205,9 @@ export default function RegistrationsPage() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editing ? "Editar Inscrição" : "Nova Inscrição"}</DialogTitle>
+            <DialogTitle>Emitir Ingresso</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-2">
             <div className="space-y-1.5 col-span-2">
@@ -228,7 +216,7 @@ export default function RegistrationsPage() {
             </div>
             <div className="space-y-1.5 col-span-2">
               <Label>Evento</Label>
-              <Select value={form.eventId} onValueChange={(v) => setForm({ ...form, eventId: v })}>
+              <Select value={form.eventId} onValueChange={(v) => setForm({ ...form, eventId: v, ticketTypeId: "" })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um evento" />
                 </SelectTrigger>
@@ -241,43 +229,25 @@ export default function RegistrationsPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label>Categoria</Label>
-              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Geral, VIP..." />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Tipo de Ingresso</Label>
-              <Select value={form.ticketType} onValueChange={(v) => setForm({ ...form, ticketType: v as typeof form.ticketType })}>
+            <div className="space-y-1.5 col-span-2">
+              <Label>Lote de Ingresso</Label>
+              <Select value={form.ticketTypeId} onValueChange={(v) => setForm({ ...form, ticketTypeId: v })}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder={form.eventId ? "Selecione um lote" : "Escolha o evento primeiro"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(RegistrationInputTicketType).map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {formatLabel(t)}
-                    </SelectItem>
-                  ))}
+                  {(formTicketTypes ?? [])
+                    .filter((t) => t.status === "active" && t.sold < t.quantity)
+                    .map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name} — {t.price === 0 ? "Gratuito" : formatCurrency(t.price)} ({t.quantity - t.sold} restantes)
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Preço</Label>
-              <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Status</Label>
-              <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as typeof form.status })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(RegistrationInputStatus).map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {formatLabel(s)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {form.eventId && (formTicketTypes ?? []).length === 0 && (
+                <p className="text-xs text-muted-foreground">Nenhum lote cadastrado para este evento ainda.</p>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label>Email</Label>
@@ -287,19 +257,49 @@ export default function RegistrationsPage() {
               <Label>Telefone</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
-            <div className="flex items-center gap-2 col-span-2">
-              <Checkbox checked={form.checkedIn} onCheckedChange={(v) => setForm({ ...form, checkedIn: !!v })} />
-              <Label>Já fez check-in</Label>
+            <div className="space-y-1.5 col-span-2">
+              <Label>Status</Label>
+              <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as typeof form.status })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="confirmed">Confirmado</SelectItem>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                  <SelectItem value="waitlist">Lista de Espera</SelectItem>
+                  <SelectItem value="cancelled">Cancelado</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleSubmit} disabled={!form.participantName || !form.eventId}>
-              {editing ? "Salvar Alterações" : "Criar Inscrição"}
+            <Button onClick={handleSubmit} disabled={!form.participantName || !form.eventId || !form.ticketTypeId || !form.email || !form.phone}>
+              Emitir Ingresso
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!viewingTicket} onOpenChange={(open) => !open && setViewingTicket(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Ingresso</DialogTitle>
+          </DialogHeader>
+          {viewingTicket && (
+            <div className="flex flex-col items-center gap-4 py-4">
+              <QRCodeSVG value={viewingTicket.ticketCode} size={200} />
+              <div className="text-center">
+                <p className="font-mono text-lg font-semibold tracking-wider">{viewingTicket.ticketCode}</p>
+                <p className="text-sm text-muted-foreground">{viewingTicket.participantName}</p>
+              </div>
+              <Badge variant={viewingTicket.checkedIn ? "default" : "outline"}>
+                {viewingTicket.checkedIn ? "Check-in já realizado" : "Aguardando check-in"}
+              </Badge>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -308,7 +308,7 @@ export default function RegistrationsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir inscrição?</AlertDialogTitle>
             <AlertDialogDescription>
-              Isso removerá permanentemente "{deleting?.participantName}" da lista de inscrições.
+              Isso removerá permanentemente "{deleting?.participantName}" da lista de inscrições e devolverá o ingresso ao lote.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

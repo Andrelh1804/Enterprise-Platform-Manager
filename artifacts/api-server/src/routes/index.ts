@@ -8,6 +8,7 @@ import contractsRouter from "./contracts";
 import staffRouter from "./staff";
 import transactionsRouter from "./transactions";
 import registrationsRouter from "./registrations";
+import ticketTypesRouter from "./ticket-types";
 
 const router: IRouter = Router();
 
@@ -19,6 +20,7 @@ router.use(suppliersRouter);
 router.use(contractsRouter);
 router.use(staffRouter);
 router.use(transactionsRouter);
+router.use(ticketTypesRouter);
 router.use(registrationsRouter);
 
 export default router;

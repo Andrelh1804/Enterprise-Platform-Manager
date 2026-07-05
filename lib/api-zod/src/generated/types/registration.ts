@@ -7,7 +7,10 @@
  */
 import type { RegistrationInput } from './registrationInput';
 
-export type Registration = RegistrationInput & {
+export type Registration = RegistrationInput & ({
   id: string;
+  ticketCode: string;
+  checkedIn: boolean;
+  checkedInAt?: Date | null;
   createdAt: Date;
-};
+});

@@ -7,14 +7,16 @@ import {
   useListStaff,
   useListTransactions,
   useListRegistrations,
+  useListTicketTypes,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatDate, formatLabel, statusBadgeVariant } from "@/lib/format";
-import { ArrowLeft, MapPin, Users, Calendar } from "lucide-react";
+import { ArrowLeft, MapPin, Users, Calendar, ExternalLink, Tags } from "lucide-react";
 
 export default function EventDetailPage() {
   const params = useParams<{ id: string }>();
@@ -27,6 +29,7 @@ export default function EventDetailPage() {
   const { data: staff } = useListStaff({ eventId });
   const { data: transactions } = useListTransactions({ eventId });
   const { data: registrations } = useListRegistrations({ eventId });
+  const { data: ticketTypes } = useListTicketTypes({ eventId });
 
   if (isLoading) {
     return (
@@ -245,8 +248,61 @@ export default function EventDetailPage() {
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Tags className="h-4 w-4" />
+            Ticket Types
+          </CardTitle>
+          <Link href="/ticket-types">
+            <Button variant="outline" size="sm">Manage Ticket Types</Button>
+          </Link>
+        </CardHeader>
+        <CardContent>
+          {!ticketTypes || ticketTypes.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">No ticket types configured yet.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Sold</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {ticketTypes.map((t) => (
+                  <TableRow key={t.id}>
+                    <TableCell className="font-medium">{t.name}</TableCell>
+                    <TableCell>{t.price === 0 ? "Free" : formatCurrency(t.price)}</TableCell>
+                    <TableCell className="min-w-40">
+                      <div className="flex items-center gap-2">
+                        <Progress value={t.quantity > 0 ? (t.sold / t.quantity) * 100 : 0} className="w-24" />
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                          {t.sold}/{t.quantity}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={statusBadgeVariant[t.status] ?? "outline"}>{formatLabel(t.status)}</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Registrations</CardTitle>
+          <a href={`/e/${eventId}`} target="_blank" rel="noreferrer">
+            <Button variant="outline" size="sm">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Public Ticket Page
+            </Button>
+          </a>
         </CardHeader>
         <CardContent>
           {!registrations || registrations.length === 0 ? (
@@ -256,24 +312,29 @@ export default function EventDetailPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Participant</TableHead>
-                  <TableHead>Ticket</TableHead>
+                  <TableHead>Ticket Type</TableHead>
+                  <TableHead>Code</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Checked In</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {registrations.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell className="font-medium">{r.participantName}</TableCell>
-                    <TableCell>{formatLabel(r.ticketType)}</TableCell>
-                    <TableCell>{formatCurrency(r.price)}</TableCell>
-                    <TableCell>
-                      <Badge variant={statusBadgeVariant[r.status]}>{formatLabel(r.status)}</Badge>
-                    </TableCell>
-                    <TableCell>{r.checkedIn ? "Yes" : "No"}</TableCell>
-                  </TableRow>
-                ))}
+                {registrations.map((r) => {
+                  const ticketTypeName = ticketTypes?.find((t) => t.id === r.ticketTypeId)?.name ?? "—";
+                  return (
+                    <TableRow key={r.id}>
+                      <TableCell className="font-medium">{r.participantName}</TableCell>
+                      <TableCell>{ticketTypeName}</TableCell>
+                      <TableCell className="font-mono text-xs">{r.ticketCode}</TableCell>
+                      <TableCell>{formatCurrency(r.price)}</TableCell>
+                      <TableCell>
+                        <Badge variant={statusBadgeVariant[r.status]}>{formatLabel(r.status)}</Badge>
+                      </TableCell>
+                      <TableCell>{r.checkedIn ? "Yes" : "No"}</TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}

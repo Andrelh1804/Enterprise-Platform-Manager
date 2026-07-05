@@ -784,48 +784,48 @@ export const ListRegistrationsQueryParams = zod.object({
 
 export const ListRegistrationsResponseItem = zod.object({
   "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
   "participantName": zod.string(),
   "email": zod.string(),
   "phone": zod.string(),
-  "category": zod.string(),
-  "ticketType": zod.enum(['free', 'paid', 'vip', 'box', 'premium', 'combo']),
   "price": zod.number(),
-  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist']),
-  "checkedIn": zod.boolean()
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
 }).and(zod.object({
   "id": zod.string(),
+  "ticketCode": zod.string(),
+  "checkedIn": zod.boolean(),
+  "checkedInAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date()
 }))
 export const ListRegistrationsResponse = zod.array(ListRegistrationsResponseItem)
 
 
 /**
- * @summary Create a registration
+ * @summary Create a registration (issues a ticket)
  */
 export const CreateRegistrationBody = zod.object({
   "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
   "participantName": zod.string(),
   "email": zod.string(),
   "phone": zod.string(),
-  "category": zod.string(),
-  "ticketType": zod.enum(['free', 'paid', 'vip', 'box', 'premium', 'combo']),
   "price": zod.number(),
-  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist']),
-  "checkedIn": zod.boolean()
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
 })
 
 export const CreateRegistrationResponse = zod.object({
   "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
   "participantName": zod.string(),
   "email": zod.string(),
   "phone": zod.string(),
-  "category": zod.string(),
-  "ticketType": zod.enum(['free', 'paid', 'vip', 'box', 'premium', 'combo']),
   "price": zod.number(),
-  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist']),
-  "checkedIn": zod.boolean()
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
 }).and(zod.object({
   "id": zod.string(),
+  "ticketCode": zod.string(),
+  "checkedIn": zod.boolean(),
+  "checkedInAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date()
 }))
 
@@ -839,16 +839,17 @@ export const GetRegistrationParams = zod.object({
 
 export const GetRegistrationResponse = zod.object({
   "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
   "participantName": zod.string(),
   "email": zod.string(),
   "phone": zod.string(),
-  "category": zod.string(),
-  "ticketType": zod.enum(['free', 'paid', 'vip', 'box', 'premium', 'combo']),
   "price": zod.number(),
-  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist']),
-  "checkedIn": zod.boolean()
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
 }).and(zod.object({
   "id": zod.string(),
+  "ticketCode": zod.string(),
+  "checkedIn": zod.boolean(),
+  "checkedInAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date()
 }))
 
@@ -862,28 +863,27 @@ export const UpdateRegistrationParams = zod.object({
 
 export const UpdateRegistrationBody = zod.object({
   "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
   "participantName": zod.string(),
   "email": zod.string(),
   "phone": zod.string(),
-  "category": zod.string(),
-  "ticketType": zod.enum(['free', 'paid', 'vip', 'box', 'premium', 'combo']),
   "price": zod.number(),
-  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist']),
-  "checkedIn": zod.boolean()
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
 })
 
 export const UpdateRegistrationResponse = zod.object({
   "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
   "participantName": zod.string(),
   "email": zod.string(),
   "phone": zod.string(),
-  "category": zod.string(),
-  "ticketType": zod.enum(['free', 'paid', 'vip', 'box', 'premium', 'combo']),
   "price": zod.number(),
-  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist']),
-  "checkedIn": zod.boolean()
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
 }).and(zod.object({
   "id": zod.string(),
+  "ticketCode": zod.string(),
+  "checkedIn": zod.boolean(),
+  "checkedInAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date()
 }))
 
@@ -896,5 +896,141 @@ export const DeleteRegistrationParams = zod.object({
 })
 
 export const DeleteRegistrationResponse = zod.void()
+
+
+/**
+ * @summary Check in a ticket by its ticket code (QR code payload)
+ */
+export const CheckInRegistrationBody = zod.object({
+  "ticketCode": zod.string()
+})
+
+export const CheckInRegistrationResponse = zod.object({
+  "registration": zod.object({
+  "eventId": zod.string(),
+  "ticketTypeId": zod.string(),
+  "participantName": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string(),
+  "price": zod.number(),
+  "status": zod.enum(['confirmed', 'pending', 'cancelled', 'waitlist'])
+}).and(zod.object({
+  "id": zod.string(),
+  "ticketCode": zod.string(),
+  "checkedIn": zod.boolean(),
+  "checkedInAt": zod.coerce.date().nullish(),
+  "createdAt": zod.coerce.date()
+})),
+  "alreadyCheckedIn": zod.boolean()
+})
+
+
+/**
+ * @summary List ticket types
+ */
+export const ListTicketTypesQueryParams = zod.object({
+  "eventId": zod.coerce.string().optional()
+})
+
+export const ListTicketTypesResponseItem = zod.object({
+  "eventId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "price": zod.number(),
+  "quantity": zod.number(),
+  "status": zod.enum(['active', 'inactive', 'sold_out'])
+}).and(zod.object({
+  "id": zod.string(),
+  "sold": zod.number(),
+  "createdAt": zod.coerce.date()
+}))
+export const ListTicketTypesResponse = zod.array(ListTicketTypesResponseItem)
+
+
+/**
+ * @summary Create a ticket type
+ */
+export const CreateTicketTypeBody = zod.object({
+  "eventId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "price": zod.number(),
+  "quantity": zod.number(),
+  "status": zod.enum(['active', 'inactive', 'sold_out'])
+})
+
+export const CreateTicketTypeResponse = zod.object({
+  "eventId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "price": zod.number(),
+  "quantity": zod.number(),
+  "status": zod.enum(['active', 'inactive', 'sold_out'])
+}).and(zod.object({
+  "id": zod.string(),
+  "sold": zod.number(),
+  "createdAt": zod.coerce.date()
+}))
+
+
+/**
+ * @summary Get a ticket type
+ */
+export const GetTicketTypeParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const GetTicketTypeResponse = zod.object({
+  "eventId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "price": zod.number(),
+  "quantity": zod.number(),
+  "status": zod.enum(['active', 'inactive', 'sold_out'])
+}).and(zod.object({
+  "id": zod.string(),
+  "sold": zod.number(),
+  "createdAt": zod.coerce.date()
+}))
+
+
+/**
+ * @summary Update a ticket type
+ */
+export const UpdateTicketTypeParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const UpdateTicketTypeBody = zod.object({
+  "eventId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "price": zod.number(),
+  "quantity": zod.number(),
+  "status": zod.enum(['active', 'inactive', 'sold_out'])
+})
+
+export const UpdateTicketTypeResponse = zod.object({
+  "eventId": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "price": zod.number(),
+  "quantity": zod.number(),
+  "status": zod.enum(['active', 'inactive', 'sold_out'])
+}).and(zod.object({
+  "id": zod.string(),
+  "sold": zod.number(),
+  "createdAt": zod.coerce.date()
+}))
+
+
+/**
+ * @summary Delete a ticket type
+ */
+export const DeleteTicketTypeParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const DeleteTicketTypeResponse = zod.void()
 
 

@@ -26,6 +26,8 @@ tags:
     description: Financial transactions
   - name: registrations
     description: Participant registrations
+  - name: ticket-types
+    description: Ticket types and lots for events
 paths:
   /healthz:
     get:
@@ -563,7 +565,7 @@ paths:
     post:
       operationId: createRegistration
       tags: [registrations]
-      summary: Create a registration
+      summary: Create a registration (issues a ticket)
       requestBody:
         required: true
         content:
@@ -617,6 +619,108 @@ paths:
       operationId: deleteRegistration
       tags: [registrations]
       summary: Delete a registration
+      responses:
+        "204":
+          description: Deleted
+
+  /registrations/checkin:
+    post:
+      operationId: checkInRegistration
+      tags: [registrations]
+      summary: Check in a ticket by its ticket code (QR code payload)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckInInput"
+      responses:
+        "200":
+          description: Check-in result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckInResult"
+        "404":
+          description: Ticket code not found
+
+  /ticket-types:
+    get:
+      operationId: listTicketTypes
+      tags: [ticket-types]
+      summary: List ticket types
+      parameters:
+        - name: eventId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of ticket types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TicketType"
+    post:
+      operationId: createTicketType
+      tags: [ticket-types]
+      summary: Create a ticket type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketTypeInput"
+      responses:
+        "201":
+          description: Created ticket type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketType"
+
+  /ticket-types/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getTicketType
+      tags: [ticket-types]
+      summary: Get a ticket type
+      responses:
+        "200":
+          description: Ticket type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketType"
+    put:
+      operationId: updateTicketType
+      tags: [ticket-types]
+      summary: Update a ticket type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketTypeInput"
+      responses:
+        "200":
+          description: Updated ticket type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketType"
+    delete:
+      operationId: deleteTicketType
+      tags: [ticket-types]
+      summary: Delete a ticket type
       responses:
         "204":
           description: Deleted
@@ -961,34 +1065,27 @@ components:
       properties:
         eventId:
           type: string
+        ticketTypeId:
+          type: string
         participantName:
           type: string
         email:
           type: string
         phone:
           type: string
-        category:
-          type: string
-        ticketType:
-          type: string
-          enum: [free, paid, vip, box, premium, combo]
         price:
           type: number
         status:
           type: string
           enum: [confirmed, pending, cancelled, waitlist]
-        checkedIn:
-          type: boolean
       required:
         - eventId
+        - ticketTypeId
         - participantName
         - email
         - phone
-        - category
-        - ticketType
         - price
         - status
-        - checkedIn
 
     Registration:
       allOf:
@@ -997,9 +1094,79 @@ components:
           properties:
             id:
               type: string
+            ticketCode:
+              type: string
+            checkedIn:
+              type: boolean
+            checkedInAt:
+              type: string
+              format: date-time
+              nullable: true
             createdAt:
               type: string
               format: date-time
           required:
             - id
+            - ticketCode
+            - checkedIn
+            - createdAt
+
+    CheckInInput:
+      type: object
+      properties:
+        ticketCode:
+          type: string
+      required:
+        - ticketCode
+
+    CheckInResult:
+      type: object
+      properties:
+        registration:
+          $ref: "#/components/schemas/Registration"
+        alreadyCheckedIn:
+          type: boolean
+      required:
+        - registration
+        - alreadyCheckedIn
+
+    TicketTypeInput:
+      type: object
+      properties:
+        eventId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+        quantity:
+          type: integer
+        status:
+          type: string
+          enum: [active, inactive, sold_out]
+      required:
+        - eventId
+        - name
+        - price
+        - quantity
+        - status
+
+    TicketType:
+      allOf:
+        - $ref: "#/components/schemas/TicketTypeInput"
+        - type: object
+          properties:
+            id:
+              type: string
+            sold:
+              type: integer
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - sold
             - createdAt

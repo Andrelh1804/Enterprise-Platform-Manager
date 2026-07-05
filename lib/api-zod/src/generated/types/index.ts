@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './checkInInput';
+export * from './checkInResult';
 export * from './contract';
 export * from './contractInput';
 export * from './contractInputContractType';
@@ -20,12 +22,12 @@ export * from './listRegistrationsParams';
 export * from './listSponsorsParams';
 export * from './listStaffParams';
 export * from './listSuppliersParams';
+export * from './listTicketTypesParams';
 export * from './listTransactionsParams';
 export * from './listTransactionsType';
 export * from './registration';
 export * from './registrationInput';
 export * from './registrationInputStatus';
-export * from './registrationInputTicketType';
 export * from './sponsor';
 export * from './sponsorInput';
 export * from './sponsorInputStatus';
@@ -36,6 +38,9 @@ export * from './staffMemberInputStatus';
 export * from './supplier';
 export * from './supplierInput';
 export * from './supplierInputStatus';
+export * from './ticketType';
+export * from './ticketTypeInput';
+export * from './ticketTypeInputStatus';
 export * from './transaction';
 export * from './transactionInput';
 export * from './transactionInputPaymentMethod';
