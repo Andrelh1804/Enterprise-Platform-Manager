@@ -339,7 +339,28 @@ limit?: number;
  * @minimum 0
  */
 offset?: number;
+sortBy?: ListRegistrationsSortBy;
+sortOrder?: ListRegistrationsSortOrder;
 };
+
+export type ListRegistrationsSortBy = typeof ListRegistrationsSortBy[keyof typeof ListRegistrationsSortBy];
+
+
+export const ListRegistrationsSortBy = {
+  participantName: 'participantName',
+  createdAt: 'createdAt',
+  price: 'price',
+  status: 'status',
+  checkedIn: 'checkedIn',
+} as const;
+
+export type ListRegistrationsSortOrder = typeof ListRegistrationsSortOrder[keyof typeof ListRegistrationsSortOrder];
+
+
+export const ListRegistrationsSortOrder = {
+  asc: 'asc',
+  desc: 'desc',
+} as const;
 
 export type ListTicketTypesParams = {
 eventId?: string;

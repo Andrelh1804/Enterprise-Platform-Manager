@@ -574,6 +574,20 @@ paths:
             type: integer
             minimum: 0
             default: 0
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [participantName, createdAt, price, status, checkedIn]
+            default: createdAt
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
       responses:
         "200":
           description: Paginated list of registrations

@@ -29,13 +29,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatLabel, statusBadgeVariant } from "@/lib/format";
-import { Plus, Trash2, Ticket, QrCode, Download, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Ticket, QrCode, Download, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
 function exportUrl(eventId: string): string {
   const params = eventId !== "all" ? `?eventId=${encodeURIComponent(eventId)}` : "";
   return `${import.meta.env.BASE_URL}api/registrations/export${params}`;
+}
+
+type SortColumn = "participantName" | "createdAt" | "price" | "status" | "checkedIn";
+
+function SortableHead({
+  column,
+  sortBy,
+  sortOrder,
+  onSort,
+  children,
+}: {
+  column: SortColumn;
+  sortBy: SortColumn;
+  sortOrder: "asc" | "desc";
+  onSort: (column: SortColumn) => void;
+  children: React.ReactNode;
+}) {
+  const active = sortBy === column;
+  return (
+    <TableHead>
+      <button
+        className="flex items-center gap-1 hover:text-foreground text-inherit"
+        onClick={() => onSort(column)}
+      >
+        {children}
+        {active ? (
+          sortOrder === "asc" ? (
+            <ArrowUp className="h-3.5 w-3.5" />
+          ) : (
+            <ArrowDown className="h-3.5 w-3.5" />
+          )
+        ) : (
+          <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
+        )}
+      </button>
+    </TableHead>
+  );
 }
 
 const emptyForm = {
@@ -55,6 +92,20 @@ export default function RegistrationsPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [sortBy, setSortBy] = useState<"participantName" | "createdAt" | "price" | "status" | "checkedIn">(
+    "createdAt",
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  function toggleSort(column: typeof sortBy) {
+    if (sortBy === column) {
+      setSortOrder((o) => (o === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(column);
+      setSortOrder("asc");
+    }
+    setPage(0);
+  }
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -73,6 +124,8 @@ export default function RegistrationsPage() {
     ...(search ? { search } : {}),
     limit: PAGE_SIZE,
     offset: page * PAGE_SIZE,
+    sortBy,
+    sortOrder,
   });
   const registrations = data?.items;
   const total = data?.total ?? 0;
@@ -207,12 +260,20 @@ export default function RegistrationsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Participante</TableHead>
+                <SortableHead column="participantName" sortBy={sortBy} sortOrder={sortOrder} onSort={toggleSort}>
+                  Participante
+                </SortableHead>
                 <TableHead>Evento</TableHead>
                 <TableHead>Código</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Check-in</TableHead>
+                <SortableHead column="price" sortBy={sortBy} sortOrder={sortOrder} onSort={toggleSort}>
+                  Preço
+                </SortableHead>
+                <SortableHead column="status" sortBy={sortBy} sortOrder={sortOrder} onSort={toggleSort}>
+                  Status
+                </SortableHead>
+                <SortableHead column="checkedIn" sortBy={sortBy} sortOrder={sortOrder} onSort={toggleSort}>
+                  Check-in
+                </SortableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>

@@ -5,6 +5,8 @@
  * EventFlow API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ListRegistrationsSortBy } from './listRegistrationsSortBy';
+import type { ListRegistrationsSortOrder } from './listRegistrationsSortOrder';
 
 export type ListRegistrationsParams = {
 eventId?: string;
@@ -21,4 +23,6 @@ limit?: number;
  * @minimum 0
  */
 offset?: number;
+sortBy?: ListRegistrationsSortBy;
+sortOrder?: ListRegistrationsSortOrder;
 };

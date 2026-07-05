@@ -784,13 +784,16 @@ export const listRegistrationsQueryLimitMax = 100;
 export const listRegistrationsQueryOffsetDefault = 0;
 export const listRegistrationsQueryOffsetMin = 0;
 
-
+export const listRegistrationsQuerySortByDefault = `createdAt`;
+export const listRegistrationsQuerySortOrderDefault = `desc`;
 
 export const ListRegistrationsQueryParams = zod.object({
   "eventId": zod.coerce.string().optional(),
   "search": zod.coerce.string().optional().describe('Filters by participant name, email, or ticket code (case-insensitive)'),
   "limit": zod.coerce.number().min(1).max(listRegistrationsQueryLimitMax).default(listRegistrationsQueryLimitDefault),
-  "offset": zod.coerce.number().min(listRegistrationsQueryOffsetMin).default(listRegistrationsQueryOffsetDefault)
+  "offset": zod.coerce.number().min(listRegistrationsQueryOffsetMin).default(listRegistrationsQueryOffsetDefault),
+  "sortBy": zod.enum(['participantName', 'createdAt', 'price', 'status', 'checkedIn']).default(listRegistrationsQuerySortByDefault),
+  "sortOrder": zod.enum(['asc', 'desc']).default(listRegistrationsQuerySortOrderDefault)
 })
 
 export const ListRegistrationsResponse = zod.object({

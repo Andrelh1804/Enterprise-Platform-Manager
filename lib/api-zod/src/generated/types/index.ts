@@ -19,6 +19,8 @@ export * from './eventInputStatus';
 export * from './healthStatus';
 export * from './listContractsParams';
 export * from './listRegistrationsParams';
+export * from './listRegistrationsSortBy';
+export * from './listRegistrationsSortOrder';
 export * from './listSponsorsParams';
 export * from './listStaffParams';
 export * from './listSuppliersParams';

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { Router, type IRouter } from "express";
-import { and, eq, ilike, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { db, registrationsTable, ticketTypesTable, eventsTable } from "@workspace/db";
 import {
   CreateRegistrationBody,
@@ -30,7 +30,7 @@ router.get("/registrations", async (req, res): Promise<void> => {
     return;
   }
 
-  const { eventId, search, limit, offset } = query.data;
+  const { eventId, search, limit, offset, sortBy, sortOrder } = query.data;
 
   const conditions = [
     eventId ? eq(registrationsTable.eventId, eventId) : undefined,
@@ -45,12 +45,22 @@ router.get("/registrations", async (req, res): Promise<void> => {
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
+  const sortColumn = {
+    participantName: registrationsTable.participantName,
+    createdAt: registrationsTable.createdAt,
+    price: registrationsTable.price,
+    status: registrationsTable.status,
+    checkedIn: registrationsTable.checkedIn,
+  }[sortBy];
+
+  const orderFn = sortOrder === "asc" ? asc : desc;
+
   const [registrations, [{ count }]] = await Promise.all([
     db
       .select()
       .from(registrationsTable)
       .where(whereClause)
-      .orderBy(sql`${registrationsTable.createdAt} desc`)
+      .orderBy(orderFn(sortColumn), desc(registrationsTable.createdAt))
       .limit(limit)
       .offset(offset),
     db
