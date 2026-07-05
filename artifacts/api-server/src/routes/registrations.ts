@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { Router, type IRouter } from "express";
 import { and, eq, sql } from "drizzle-orm";
-import { db, registrationsTable, ticketTypesTable } from "@workspace/db";
+import { db, registrationsTable, ticketTypesTable, eventsTable } from "@workspace/db";
 import {
   CreateRegistrationBody,
   UpdateRegistrationBody,
@@ -109,6 +109,66 @@ router.post("/registrations", async (req, res): Promise<void> => {
     }
     throw err;
   }
+});
+
+function csvEscape(value: unknown): string {
+  const str = value === null || value === undefined ? "" : String(value);
+  if (/[",\n]/.test(str)) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+router.get("/registrations/export", async (req, res): Promise<void> => {
+  const eventId = typeof req.query.eventId === "string" ? req.query.eventId : undefined;
+
+  const registrations = eventId
+    ? await db.select().from(registrationsTable).where(eq(registrationsTable.eventId, eventId))
+    : await db.select().from(registrationsTable);
+
+  const ticketTypes = await db.select().from(ticketTypesTable);
+  const ticketTypeNameById = new Map(ticketTypes.map((t) => [t.id, t.name]));
+
+  let filenameSuffix = "todos-os-eventos";
+  if (eventId) {
+    const [event] = await db.select().from(eventsTable).where(eq(eventsTable.id, eventId));
+    if (event) {
+      filenameSuffix = event.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || eventId;
+    }
+  }
+
+  const headers = [
+    "Participante",
+    "Email",
+    "Telefone",
+    "Tipo de Ingresso",
+    "Codigo do Ingresso",
+    "Preco",
+    "Status",
+    "Check-in Realizado",
+    "Data do Check-in",
+    "Data da Inscricao",
+  ];
+
+  const rows = registrations.map((r) => [
+    r.participantName,
+    r.email,
+    r.phone,
+    ticketTypeNameById.get(r.ticketTypeId) ?? "",
+    r.ticketCode,
+    (r.price / 100).toFixed(2).replace(".", ","),
+    r.status,
+    r.checkedIn ? "Sim" : "Nao",
+    r.checkedInAt ? new Date(r.checkedInAt).toISOString() : "",
+    r.createdAt ? new Date(r.createdAt).toISOString() : "",
+  ]);
+
+  const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(",")).join("\r\n");
+  const csvWithBom = "\uFEFF" + csv;
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="inscricoes-${filenameSuffix}.csv"`);
+  res.send(csvWithBom);
 });
 
 router.post("/registrations/checkin", async (req, res): Promise<void> => {

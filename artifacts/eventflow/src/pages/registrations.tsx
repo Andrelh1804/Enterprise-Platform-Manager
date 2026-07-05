@@ -29,9 +29,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatLabel, statusBadgeVariant } from "@/lib/format";
-import { Plus, Trash2, Ticket, QrCode } from "lucide-react";
+import { Plus, Trash2, Ticket, QrCode, Download } from "lucide-react";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
+
+function exportUrl(eventId: string): string {
+  const params = eventId !== "all" ? `?eventId=${encodeURIComponent(eventId)}` : "";
+  return `${import.meta.env.BASE_URL}api/registrations/export${params}`;
+}
 
 const emptyForm = {
   eventId: "",
@@ -120,10 +125,18 @@ export default function RegistrationsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Inscrições e Ingressos</h1>
           <p className="text-muted-foreground">Participantes, ingressos emitidos e status de check-in.</p>
         </div>
-        <Button onClick={openCreate} disabled={!events || events.length === 0}>
-          <Plus className="h-4 w-4 mr-2" />
-          Emitir Ingresso
-        </Button>
+        <div className="flex items-center gap-2">
+          <a href={exportUrl(eventFilter)}>
+            <Button variant="outline" disabled={!registrations || registrations.length === 0}>
+              <Download className="h-4 w-4 mr-2" />
+              Exportar CSV
+            </Button>
+          </a>
+          <Button onClick={openCreate} disabled={!events || events.length === 0}>
+            <Plus className="h-4 w-4 mr-2" />
+            Emitir Ingresso
+          </Button>
+        </div>
       </div>
 
       <Select value={eventFilter} onValueChange={setEventFilter}>

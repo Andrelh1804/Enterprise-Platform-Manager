@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatDate, formatLabel, statusBadgeVariant } from "@/lib/format";
-import { ArrowLeft, MapPin, Users, Calendar, ExternalLink, Tags } from "lucide-react";
+import { ArrowLeft, MapPin, Users, Calendar, ExternalLink, Tags, Download } from "lucide-react";
 
 export default function EventDetailPage() {
   const params = useParams<{ id: string }>();
@@ -297,12 +297,20 @@ export default function EventDetailPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Registrations</CardTitle>
-          <a href={`/e/${eventId}`} target="_blank" rel="noreferrer">
-            <Button variant="outline" size="sm">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Public Ticket Page
-            </Button>
-          </a>
+          <div className="flex items-center gap-2">
+            <a href={`${import.meta.env.BASE_URL}api/registrations/export?eventId=${encodeURIComponent(eventId)}`}>
+              <Button variant="outline" size="sm" disabled={!registrations || registrations.length === 0}>
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
+            </a>
+            <a href={`/e/${eventId}`} target="_blank" rel="noreferrer">
+              <Button variant="outline" size="sm">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Public Ticket Page
+              </Button>
+            </a>
+          </div>
         </CardHeader>
         <CardContent>
           {!registrations || registrations.length === 0 ? (
