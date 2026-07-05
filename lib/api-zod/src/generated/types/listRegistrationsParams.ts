@@ -8,4 +8,17 @@
 
 export type ListRegistrationsParams = {
 eventId?: string;
+/**
+ * Filters by participant name, email, or ticket code (case-insensitive)
+ */
+search?: string;
+/**
+ * @minimum 1
+ * @maximum 100
+ */
+limit?: number;
+/**
+ * @minimum 0
+ */
+offset?: number;
 };

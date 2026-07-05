@@ -778,11 +778,23 @@ export const DeleteTransactionResponse = zod.void()
 /**
  * @summary List registrations
  */
+export const listRegistrationsQueryLimitDefault = 20;
+export const listRegistrationsQueryLimitMax = 100;
+
+export const listRegistrationsQueryOffsetDefault = 0;
+export const listRegistrationsQueryOffsetMin = 0;
+
+
+
 export const ListRegistrationsQueryParams = zod.object({
-  "eventId": zod.coerce.string().optional()
+  "eventId": zod.coerce.string().optional(),
+  "search": zod.coerce.string().optional().describe('Filters by participant name, email, or ticket code (case-insensitive)'),
+  "limit": zod.coerce.number().min(1).max(listRegistrationsQueryLimitMax).default(listRegistrationsQueryLimitDefault),
+  "offset": zod.coerce.number().min(listRegistrationsQueryOffsetMin).default(listRegistrationsQueryOffsetDefault)
 })
 
-export const ListRegistrationsResponseItem = zod.object({
+export const ListRegistrationsResponse = zod.object({
+  "items": zod.array(zod.object({
   "eventId": zod.string(),
   "ticketTypeId": zod.string(),
   "participantName": zod.string(),
@@ -796,8 +808,11 @@ export const ListRegistrationsResponseItem = zod.object({
   "checkedIn": zod.boolean(),
   "checkedInAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date()
-}))
-export const ListRegistrationsResponse = zod.array(ListRegistrationsResponseItem)
+}))),
+  "total": zod.number(),
+  "limit": zod.number(),
+  "offset": zod.number()
+})
 
 
 /**

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { Router, type IRouter } from "express";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, ilike, or, sql } from "drizzle-orm";
 import { db, registrationsTable, ticketTypesTable, eventsTable } from "@workspace/db";
 import {
   CreateRegistrationBody,
@@ -30,11 +30,36 @@ router.get("/registrations", async (req, res): Promise<void> => {
     return;
   }
 
-  const registrations = query.data.eventId
-    ? await db.select().from(registrationsTable).where(eq(registrationsTable.eventId, query.data.eventId))
-    : await db.select().from(registrationsTable);
+  const { eventId, search, limit, offset } = query.data;
 
-  res.json(ListRegistrationsResponse.parse(registrations));
+  const conditions = [
+    eventId ? eq(registrationsTable.eventId, eventId) : undefined,
+    search
+      ? or(
+          ilike(registrationsTable.participantName, `%${search}%`),
+          ilike(registrationsTable.email, `%${search}%`),
+          ilike(registrationsTable.ticketCode, `%${search}%`),
+        )
+      : undefined,
+  ].filter((c): c is NonNullable<typeof c> => c !== undefined);
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [registrations, [{ count }]] = await Promise.all([
+    db
+      .select()
+      .from(registrationsTable)
+      .where(whereClause)
+      .orderBy(sql`${registrationsTable.createdAt} desc`)
+      .limit(limit)
+      .offset(offset),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(registrationsTable)
+      .where(whereClause),
+  ]);
+
+  res.json(ListRegistrationsResponse.parse({ items: registrations, total: count, limit, offset }));
 });
 
 router.post("/registrations", async (req, res): Promise<void> => {

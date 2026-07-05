@@ -37,6 +37,7 @@ import type {
   ListTransactionsParams,
   Registration,
   RegistrationInput,
+  RegistrationListResponse,
   Sponsor,
   SponsorInput,
   StaffMember,
@@ -2474,9 +2475,9 @@ export const getListRegistrationsUrl = (params?: ListRegistrationsParams,) => {
 /**
  * @summary List registrations
  */
-export const listRegistrations = async (params?: ListRegistrationsParams, options?: RequestInit): Promise<Registration[]> => {
+export const listRegistrations = async (params?: ListRegistrationsParams, options?: RequestInit): Promise<RegistrationListResponse> => {
 
-  return customFetch<Registration[]>(getListRegistrationsUrl(params),
+  return customFetch<RegistrationListResponse>(getListRegistrationsUrl(params),
   {
     ...options,
     method: 'GET'

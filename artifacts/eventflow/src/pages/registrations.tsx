@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useListRegistrations,
   useCreateRegistration,
@@ -29,7 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatLabel, statusBadgeVariant } from "@/lib/format";
-import { Plus, Trash2, Ticket, QrCode, Download } from "lucide-react";
+import { Plus, Trash2, Ticket, QrCode, Download, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -47,12 +47,36 @@ const emptyForm = {
   status: "confirmed" as const,
 };
 
+const PAGE_SIZE = 10;
+
 export default function RegistrationsPage() {
   const queryClient = useQueryClient();
   const [eventFilter, setEventFilter] = useState<string>("all");
-  const { data: registrations, isLoading } = useListRegistrations(
-    eventFilter === "all" ? undefined : { eventId: eventFilter },
-  );
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(0);
+    }, 350);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [eventFilter]);
+
+  const { data, isLoading } = useListRegistrations({
+    ...(eventFilter === "all" ? {} : { eventId: eventFilter }),
+    ...(search ? { search } : {}),
+    limit: PAGE_SIZE,
+    offset: page * PAGE_SIZE,
+  });
+  const registrations = data?.items;
+  const total = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const { data: events } = useListEvents();
   const createMutation = useCreateRegistration();
   const deleteMutation = useDeleteRegistration();
@@ -127,7 +151,7 @@ export default function RegistrationsPage() {
         </div>
         <div className="flex items-center gap-2">
           <a href={exportUrl(eventFilter)}>
-            <Button variant="outline" disabled={!registrations || registrations.length === 0}>
+            <Button variant="outline" disabled={total === 0}>
               <Download className="h-4 w-4 mr-2" />
               Exportar CSV
             </Button>
@@ -139,19 +163,31 @@ export default function RegistrationsPage() {
         </div>
       </div>
 
-      <Select value={eventFilter} onValueChange={setEventFilter}>
-        <SelectTrigger className="w-52">
-          <SelectValue placeholder="Evento" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos os Eventos</SelectItem>
-          {(events ?? []).map((e) => (
-            <SelectItem key={e.id} value={e.id}>
-              {e.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex items-center gap-3">
+        <Select value={eventFilter} onValueChange={setEventFilter}>
+          <SelectTrigger className="w-52">
+            <SelectValue placeholder="Evento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Eventos</SelectItem>
+            {(events ?? []).map((e) => (
+              <SelectItem key={e.id} value={e.id}>
+                {e.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div className="relative w-72">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            className="pl-8"
+            placeholder="Buscar por nome, e-mail ou código..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+      </div>
 
       <Card>
         {isLoading ? (
@@ -163,7 +199,9 @@ export default function RegistrationsPage() {
         ) : !registrations || registrations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
             <Ticket className="h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">Nenhuma inscrição encontrada.</p>
+            <p className="text-muted-foreground">
+              {search ? "Nenhuma inscrição encontrada para essa busca." : "Nenhuma inscrição encontrada."}
+            </p>
           </div>
         ) : (
           <Table>
@@ -214,6 +252,33 @@ export default function RegistrationsPage() {
               ))}
             </TableBody>
           </Table>
+        )}
+        {!isLoading && registrations && registrations.length > 0 && (
+          <div className="flex items-center justify-between border-t px-4 py-3">
+            <p className="text-sm text-muted-foreground">
+              {total} inscrição{total === 1 ? "" : "ões"} · página {page + 1} de {totalPages}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Anterior
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+              >
+                Próxima
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
         )}
       </Card>
 

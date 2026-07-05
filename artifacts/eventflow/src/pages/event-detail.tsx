@@ -28,7 +28,8 @@ export default function EventDetailPage() {
   const { data: contracts } = useListContracts({ eventId });
   const { data: staff } = useListStaff({ eventId });
   const { data: transactions } = useListTransactions({ eventId });
-  const { data: registrations } = useListRegistrations({ eventId });
+  const { data: registrationsData } = useListRegistrations({ eventId, limit: 100 });
+  const registrations = registrationsData?.items;
   const { data: ticketTypes } = useListTicketTypes({ eventId });
 
   if (isLoading) {

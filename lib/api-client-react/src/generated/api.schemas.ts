@@ -255,6 +255,13 @@ export type Registration = RegistrationInput & ({
   createdAt: string;
 });
 
+export interface RegistrationListResponse {
+  items: Registration[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export interface CheckInInput {
   ticketCode: string;
 }
@@ -319,6 +326,19 @@ export const ListTransactionsType = {
 
 export type ListRegistrationsParams = {
 eventId?: string;
+/**
+ * Filters by participant name, email, or ticket code (case-insensitive)
+ */
+search?: string;
+/**
+ * @minimum 1
+ * @maximum 100
+ */
+limit?: number;
+/**
+ * @minimum 0
+ */
+offset?: number;
 };
 
 export type ListTicketTypesParams = {

@@ -28,6 +28,7 @@ export * from './listTransactionsType';
 export * from './registration';
 export * from './registrationInput';
 export * from './registrationInputStatus';
+export * from './registrationListResponse';
 export * from './sponsor';
 export * from './sponsorInput';
 export * from './sponsorInputStatus';
