@@ -1,0 +1,429 @@
+Segue um prompt elaborado no nível de um **Arquiteto de Software e Engenheiro de Prompt Sênior**, projetado para orientar uma IA a desenvolver uma plataforma SaaS enterprise completa, sem utilizar simulações ou funcionalidades fictícias.
+
+# MASTER PROMPT V1.0 — EVENTFLOW ENTERPRISE
+
+## Plataforma SaaS Enterprise para Gestão Inteligente de Eventos, Ticketing, ERP, CRM, Marketplace e Inteligência Artificial
+
+## PAPEL
+
+Atue como uma equipe composta pelos melhores profissionais do mundo em:
+
+* Arquitetura de Software Enterprise
+* Engenharia de Software Full Stack
+* UX/UI Design
+* Engenharia de Dados
+* Inteligência Artificial
+* DevOps
+* Segurança da Informação
+* Finanças Corporativas
+* Gestão de Eventos
+* Gestão Esportiva
+* ERP
+* CRM
+* Business Intelligence
+* Product Management
+
+Seu objetivo é projetar e desenvolver uma plataforma SaaS de padrão Enterprise chamada **EventFlow Enterprise**, preparada para atender desde pequenos eventos até grandes operações nacionais e internacionais.
+
+Todo o sistema deverá ser desenvolvido com arquitetura modular, escalável, segura e baseada em APIs, eliminando completamente qualquer funcionalidade simulada. Cada recurso deverá ser totalmente operacional.
+
+---
+
+# DIRETRIZES GERAIS
+
+## É PROIBIDO
+
+* Criar telas fictícias.
+* Utilizar dados simulados.
+* Inserir informações "mock".
+* Criar dashboards sem dados reais.
+* Criar APIs falsas.
+* Criar módulos incompletos.
+* Deixar botões sem funcionalidade.
+* Utilizar textos de demonstração.
+* Gerar componentes sem integração.
+
+Todo recurso criado deverá possuir:
+
+* Backend funcional.
+* Banco de dados estruturado.
+* APIs REST e/ou GraphQL.
+* Controle de permissões (RBAC).
+* Auditoria.
+* Logs.
+* Histórico.
+* Validações.
+* Testes.
+* Tratamento de erros.
+* Documentação técnica.
+
+---
+
+# OBJETIVO DA PLATAFORMA
+
+Centralizar 100% da operação de qualquer tipo de evento.
+
+A plataforma deverá atender:
+
+* Corridas de rua
+* Maratonas
+* Trail Run
+* Triathlon
+* Mountain Bike
+* Ciclismo
+* Motocross
+* Eventos corporativos
+* Congressos
+* Feiras
+* Shows
+* Festivais
+* Casamentos
+* Eventos públicos
+* Eventos privados
+* Rodeios
+* Exposições
+* Workshops
+* Cursos
+* Eventos híbridos
+* Eventos online
+* Eventos presenciais
+
+---
+
+# ARQUITETURA
+
+A solução deverá possuir arquitetura baseada em microsserviços (ou modular monolítica preparada para evolução), incluindo:
+
+* API Gateway
+* Serviço de Autenticação
+* Gestão de Usuários
+* Gestão de Eventos
+* Financeiro
+* Ticketing
+* Marketplace
+* CRM
+* Contratos
+* RH/Staff
+* Marketing
+* BI
+* IA
+* Aplicativos Mobile
+* Notificações
+* Integrações
+* Auditoria
+
+Todos os módulos deverão ser independentes, desacoplados e integrados por APIs.
+
+---
+
+# MÓDULOS OBRIGATÓRIOS
+
+## Administração da Plataforma
+
+* Multiempresa
+* Multicliente (multi-tenant)
+* Multiunidade
+* Multiidioma
+* Multimoeda
+* Gestão de planos SaaS
+* Cobrança recorrente
+* Gestão de assinaturas
+* White Label
+* Gestão de permissões
+* Auditoria completa
+
+---
+
+## Gestão de Eventos
+
+Cada evento deverá possuir:
+
+* Planejamento
+* Cronograma
+* Checklists
+* Equipes
+* Infraestrutura
+* Plantas
+* Mapas
+* Documentos
+* Licenças
+* Custos
+* Receitas
+* Indicadores
+* Agenda
+* Comunicação
+* Histórico
+
+---
+
+## Ticketing Completo
+
+Permitir:
+
+* Eventos gratuitos
+* Eventos pagos
+* Eventos híbridos
+* Inscrições esportivas
+* Venda de ingressos
+* Reserva de ingressos
+* Lista de espera
+* Convites
+* Cortesias
+* Cupons
+* Lotes automáticos
+* Setores
+* Cadeiras numeradas (quando aplicável)
+* Passaportes
+* Combos
+* Assinaturas
+* Check-in por QR Code, RFID, NFC e biometria
+* Reentrada
+* Cancelamentos
+* Reembolsos
+* Transferência de titularidade
+
+Integrar com múltiplos gateways de pagamento e permitir split financeiro automático.
+
+---
+
+## Gestão Financeira
+
+* Fluxo de caixa
+* Contas a pagar
+* Contas a receber
+* Conciliação bancária
+* DRE
+* Centro de custos
+* Plano de contas
+* Orçamentos
+* Projeções
+* Pagamentos
+* Recebimentos
+* Emissão de notas fiscais
+* Relatórios gerenciais
+
+---
+
+## CRM Comercial
+
+Gerenciar:
+
+* Clientes
+* Contratantes
+* Organizadores
+* Patrocinadores
+* Expositores
+* Parceiros
+* Afiliados
+* Leads
+* Pipeline
+* Oportunidades
+* Histórico de negociações
+
+---
+
+## Marketplace
+
+Disponibilizar um marketplace para fornecedores e prestadores de serviços, incluindo:
+
+* Estruturas
+* Palcos
+* Som
+* Iluminação
+* Segurança
+* Alimentação
+* Hospedagem
+* Transporte
+* Limpeza
+* Ambulâncias
+* Brigadistas
+* Fotografia
+* Filmagem
+* Cronometragem esportiva
+* Locação de equipamentos
+
+Cada fornecedor deverá possuir perfil público, avaliações, documentos, disponibilidade, contratos e faturamento.
+
+---
+
+## Gestão de Patrocínios
+
+Permitir:
+
+* Cadastro de cotas
+* Naming rights
+* Contrapartidas
+* Aprovações
+* Contratos
+* Entregas
+* ROI
+* Relatórios
+* Prestação de contas
+
+---
+
+## Gestão de Compras
+
+* Solicitação
+* Cotação
+* Comparativo
+* Aprovação
+* Pedido
+* Recebimento
+* Pagamentos
+* Contratos
+
+---
+
+## RH e Staff
+
+Gerenciar:
+
+* Escalas
+* Ponto
+* GPS
+* Check-in
+* Horas trabalhadas
+* Treinamentos
+* Uniformes
+* Certificados
+* Pagamentos
+
+---
+
+## Gestão Documental
+
+Controlar:
+
+* Contratos
+* Licenças
+* Alvarás
+* Seguros
+* ART
+* AVCB
+* Certificados
+* Notas fiscais
+
+Todos os documentos deverão suportar assinatura eletrônica, versionamento, trilha de auditoria e armazenamento seguro.
+
+---
+
+## Marketing e Vendas
+
+Disponibilizar:
+
+* Landing pages
+* Página pública do evento
+* Programa de afiliados
+* Cupons
+* Campanhas
+* E-mail marketing
+* WhatsApp
+* SMS
+* Push notifications
+* SEO
+* Pixels de conversão
+* Integração com redes sociais
+
+---
+
+## Aplicativos Mobile
+
+Criar aplicativos para:
+
+* Gestores
+* Produtores
+* Staff
+* Participantes
+* Fornecedores
+* Patrocinadores
+
+Com funcionamento online e offline, sincronização automática e notificações em tempo real.
+
+---
+
+## Business Intelligence
+
+Criar dashboards executivos com indicadores financeiros, comerciais, operacionais e de marketing, permitindo comparativos entre eventos, previsão de demanda, análise de rentabilidade e acompanhamento em tempo real.
+
+---
+
+## Inteligência Artificial
+
+Implementar uma IA corporativa capaz de:
+
+* Estimar custos do evento.
+* Recomendar preços de ingressos.
+* Simular cenários financeiros.
+* Sugerir fornecedores.
+* Detectar riscos.
+* Gerar cronogramas.
+* Produzir contratos.
+* Elaborar orçamentos.
+* Responder perguntas em linguagem natural.
+* Criar relatórios executivos.
+* Identificar oportunidades de redução de custos e aumento de receita.
+
+---
+
+# PAINÉIS DO SISTEMA
+
+Desenvolver portais independentes para:
+
+* Super Administrador da Plataforma
+* Administrador da Empresa
+* Gestor do Evento
+* Produtor
+* Coordenador
+* Financeiro
+* Comercial
+* Marketing
+* Compras
+* RH
+* Staff
+* Contratante
+* Patrocinador
+* Fornecedor
+* Expositor
+* Afiliado
+* Participante
+
+Cada painel deverá possuir menus, permissões e dashboards específicos para o perfil do usuário.
+
+---
+
+# REQUISITOS TÉCNICOS
+
+* Arquitetura escalável e orientada a APIs.
+* Autenticação com MFA.
+* Controle de acesso por papéis (RBAC).
+* Criptografia de dados em trânsito e em repouso.
+* Logs centralizados e auditoria completa.
+* Monitoramento, métricas e alertas.
+* Backup e recuperação de desastres.
+* Testes automatizados (unitários, integração e ponta a ponta).
+* Documentação técnica e de APIs.
+* Internacionalização (i18n).
+* Acessibilidade (WCAG).
+* Interface responsiva para desktop, tablet e smartphone.
+
+---
+
+# CRITÉRIOS DE ENTREGA
+
+Antes de considerar qualquer módulo concluído, valide que:
+
+1. Não existem elementos simulados.
+2. Todas as integrações funcionam de ponta a ponta.
+3. Todas as ações persistem dados reais.
+4. Os dashboards utilizam dados reais do banco.
+5. Os relatórios podem ser exportados (PDF, Excel e CSV).
+6. Os fluxos críticos possuem testes automatizados.
+7. Não existem erros de compilação, tipagem ou execução.
+8. O desempenho é adequado para grande volume de usuários e eventos simultâneos.
+9. Todos os processos possuem trilha de auditoria.
+10. A solução está pronta para operação em ambiente de produção (Go-Live).
+
+O resultado esperado é uma plataforma SaaS Enterprise de classe mundial, preparada para comercialização, operação em larga escala e evolução contínua, com foco em segurança, desempenho, governança, escalabilidade e excelente experiência do usuário.
+
+Esse prompt serve como uma **especificação-mestra**. A partir dele, você pode criar versões especializadas (V2, V3, V4...) para módulos específicos, como **Ticketing**, **Eventos Esportivos**, **Financeiro**, **CRM**, **Marketplace**, **Aplicativos Mobile** e **Inteligência Artificial**, permitindo um desenvolvimento incremental com padrão corporativo.
